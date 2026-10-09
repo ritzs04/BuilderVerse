@@ -4,7 +4,7 @@
 
 Built as a portfolio/interview project with a production-shaped stack: **Next.js 16 (App Router) · React 19 · TypeScript · Tailwind v4 · SQLite · Server Actions**.
 
-[![CI](https://github.com/ritzs04/BuilderVerse/actions/workflows/ci.yml/badge.svg)](https://github.com/ritzs04/BuilderVerse/actions) [Live repo](https://github.com/ritzs04/BuilderVerse)
+[![CI](https://github.com/ritzs04/BuilderVerse/actions/workflows/ci.yml/badge.svg)](https://github.com/ritzs04/BuilderVerse/actions) [![Live](https://img.shields.io/badge/live-builder--verse--delta.vercel.app-brightgreen)](https://builder-verse-delta.vercel.app) [Live site](https://builder-verse-delta.vercel.app) · [Repo](https://github.com/ritzs04/BuilderVerse)
 
 > Fully self-contained: no external services required. Builder AI (chat tutor) activates only when you provide an OpenAI-compatible API key.
 
