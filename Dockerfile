@@ -19,7 +19,7 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
-# ---- 3. Minimal runtime image ----
+# ---- 3. Production runtime image (serves with `next start`) ----
 FROM node:22-bookworm-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production \
@@ -28,13 +28,15 @@ ENV NODE_ENV=production \
     HOSTNAME=0.0.0.0 \
     DATABASE_PATH=/app/data/builderverse.db
 
-# server.js calls process.chdir(__dirname), so cwd is /app at runtime.
-COPY --from=builder --chown=node:node /app/.next/standalone ./
-COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+# Production-only dependencies. better-sqlite3 ships linux prebuilds that
+# resolve from node_modules at runtime — nothing to trace or copy by hand.
+COPY --from=builder /app/package.json /app/package-lock.json ./
+RUN npm ci --omit=dev \
+  && npm cache clean --force \
+  && chown -R node:node /app/node_modules
+
+COPY --from=builder --chown=node:node /app/.next ./.next
 COPY --from=builder --chown=node:node /app/public ./public
-# better-sqlite3 is a server-external package that resolves its native binding
-# at runtime — file tracing cannot see it, so copy the package in explicitly.
-COPY --from=builder --chown=node:node /app/node_modules/better-sqlite3 ./node_modules/better-sqlite3
 
 RUN mkdir -p /app/data && chown node:node /app/data
 
@@ -44,4 +46,4 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
   CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/api/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
 
-CMD ["node", "server.js"]
+CMD ["node_modules/.bin/next", "start"]

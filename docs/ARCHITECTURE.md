@@ -76,10 +76,10 @@ Design tokens (colors, radius, shadows, fonts) are declared as CSS custom proper
 
 ## Deployment
 
-- `output: "standalone"` in `next.config.ts` produces `.next/standalone/server.js` with only the traced runtime files. The multi-stage `Dockerfile` (deps → builder → runner) copies that folder plus `public/` and `.next/static`, runs as the non-root `node` user, and `docker-compose.yml` mounts a named volume at `/app/data`.
-- `better-sqlite3` is a *server-external* package that resolves its native binding at runtime, which file tracing cannot follow — the Dockerfile copies that one package in explicitly, and CI builds the image so the setup is verified on every push.
+- The production build is served with `next start`. The multi-stage `Dockerfile` (deps → builder → runner) installs production-only dependencies, copies `.next/` plus `public/`, runs as the non-root `node` user, and `docker-compose.yml` mounts a named volume at `/app/data`.
+- `better-sqlite3` is a *server-external* package that resolves its native binding at runtime from `node_modules` — the image keeps the full production dependency tree (dev dependencies pruned), and CI builds the image so the setup is verified on every push.
 - `GET /api/health` returns 200 only when SQLite answers; it drives the image `HEALTHCHECK` and the CI container smoke test.
-- Runtime config is env, never baked in: `DATABASE_PATH`, `APP_URL`, optional `AI_*`. Not deployed to Vercel: serverless filesystems are read-only/ephemeral, which SQLite cannot use honestly.
+- Runtime config is env, never baked in: `DATABASE_PATH`, `APP_URL`, optional `AI_*`. The live demo runs on Vercel (auto-deploy from `master`, SQLite at ephemeral `/tmp`); Docker is the persistent self-hosted path.
 
 ## Deliberate trade-offs
 

@@ -74,7 +74,7 @@ src/
   lib/                  # db, auth, queries, gamification, matches, validation
 tests/                  # Playwright e2e
 docs/                   # architecture, features, database, interview cheat sheet
-Dockerfile              # multi-stage production image (standalone output)
+Dockerfile              # multi-stage production image (next start + production deps)
 docker-compose.yml      # one-command deploy with a persistent data volume
 ```
 
@@ -97,9 +97,13 @@ npm run test:e2e
 
 Five Playwright tests cover the marketing page, anonymous redirects, the **full learner journey** (signup → daily mission → lesson quiz → thinking puzzle → debug reveal → project checklist → bookmark → portfolio → settings → logout), the mobile shell + dark mode + search, and an **exactly-one-h1 accessibility check across all 16 app routes**. CI runs lint, typecheck, build, the e2e suite and a Docker image build + container health-check on every push.
 
+## Deploy
+
+Live demo: **https://builder-verse-delta.vercel.app** (auto-deploys from `master`; `vercel.json` points the SQLite file at `/tmp`, which is ephemeral — demo data resets, by design).
+
 ## Deploy with Docker
 
-The production build uses Next.js `output: "standalone"`, so the image only contains what the server needs:
+For a persistent self-hosted install, the image serves the production build with `next start` and production-only dependencies:
 
 ```bash
 docker compose up -d --build    # http://localhost:3000
@@ -119,7 +123,7 @@ docker compose up -d --build
 # then put nginx/Caddy in front for TLS, e.g. reverse-proxy :3000 → https://yourdomain
 ```
 
-Why Docker and not Vercel: this app is built around a real SQLite file, and serverless filesystems are read-only/ephemeral — a self-hosted container keeps the stack honest (and gives you a Docker story to tell in interviews).
+Docker for persistence (SQLite lives in a mounted volume and survives redeploys); Vercel for the zero-ops demo (ephemeral `/tmp` database). The config is env-driven (`DATABASE_PATH`, `APP_URL`, optional `AI_*`) so the same image and code run in both places — and the DB layer is isolated, so swapping SQLite for Postgres later is one module.
 
 ## Notes
 

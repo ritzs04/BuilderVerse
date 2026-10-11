@@ -14,8 +14,8 @@ export default defineConfig({
     ...devices["Desktop Chrome"],
   },
   webServer: {
-    // `next start` refuses to serve `output: "standalone"`, so build and then
-    // run the same standalone server the Docker image ships.
+    // Build once, then serve the production build with `next start`
+    // (the same `next start` the Docker image runs).
     command: "npm run build && node scripts/e2e-server.mjs",
     url: "http://localhost:3111",
     env: { PORT: "3111", HOSTNAME: "0.0.0.0" },
