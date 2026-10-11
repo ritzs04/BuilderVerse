@@ -30,8 +30,13 @@ ENV NODE_ENV=production \
 
 # Production-only dependencies. better-sqlite3 ships linux prebuilds that
 # resolve from node_modules at runtime — nothing to trace or copy by hand.
+# The toolchain stays available in case the native binding needs compiling
+# (prebuild-install falls back to node-gyp rebuild without it).
 COPY --from=builder /app/package.json /app/package-lock.json ./
-RUN npm ci --omit=dev \
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends python3 make g++ \
+  && rm -rf /var/lib/apt/lists/* \
+  && npm ci --omit=dev \
   && npm cache clean --force \
   && chown -R node:node /app/node_modules
 
