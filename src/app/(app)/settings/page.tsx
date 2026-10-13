@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { requireUser } from "@/lib/auth";
+import { parseInterests } from "@/lib/db";
 import { Card, SectionHeading, Button } from "@/components/ui";
 import {
   ProfileForm,
   PasswordForm,
   DeleteAccountForm,
+  LearningPreferencesForm,
 } from "@/components/settings/settings-forms";
 import { setPreferencesAction } from "@/app/actions/account";
 
@@ -28,6 +30,19 @@ export default async function SettingsPage() {
           headline={user.headline}
           githubUrl={user.github_url}
           websiteUrl={user.website_url}
+        />
+      </Card>
+
+      <Card>
+        <h2 className="mb-1 text-base font-bold text-ink">Learning preferences</h2>
+        <p className="mb-4 text-sm text-muted">
+          Chosen during onboarding — they shape your recommended starting point.
+        </p>
+        <LearningPreferencesForm
+          experience={user.experience_level}
+          goal={user.learning_goal}
+          studyTime={user.study_time}
+          interests={parseInterests(user.interests)}
         />
       </Card>
 

@@ -123,6 +123,71 @@ export default async function ProjectPage({ params }: Props) {
               ))}
             </ul>
           </section>
+
+          {/* -------------------------------------------------- test before you ship */}
+          <section className="bv-card p-5" aria-labelledby="testing-heading">
+            <h2 id="testing-heading" className="text-base font-bold text-ink">
+              Before you call it finished — test it
+            </h2>
+            <p className="mt-1 text-sm text-muted">
+              Working code is not the same as code you have checked. Tick each one off honestly.
+            </p>
+            <ul className="mt-3 space-y-2">
+              {project.testingChecklist.map((item, index) => (
+                <li key={index} className="flex items-start gap-2 text-sm text-ink-soft">
+                  <span
+                    className="mt-0.5 grid size-4 shrink-0 place-items-center rounded border border-line"
+                    aria-hidden
+                  />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* --------------------------------------------- mistakes, with the fix */}
+          <section className="bv-card p-5" aria-labelledby="mistakes-heading">
+            <h2 id="mistakes-heading" className="text-base font-bold text-ink">
+              Mistakes most people make here
+            </h2>
+            <p className="mt-1 text-sm text-muted">
+              Every bug is a clue. If you hit one of these, you are on the normal path.
+            </p>
+            <ul className="mt-3 space-y-3">
+              {project.commonMistakes.map((entry, index) => (
+                <li key={index} className="rounded-lg border border-line bg-surface-2 p-3">
+                  <p className="text-sm font-semibold text-ink">
+                    <Icon name="alertTriangle" size={14} className="mr-1.5 inline text-warning" />
+                    {entry.mistake}
+                  </p>
+                  <p className="mt-1 text-sm text-ink-soft">
+                    <span className="font-semibold text-success">Fix: </span>
+                    {entry.fix}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </section>
+
+          {/* ------------------------------------------------------- reflect */}
+          <section className="bv-card p-5" aria-labelledby="reflect-heading">
+            <h2 id="reflect-heading" className="text-base font-bold text-ink">
+              Reflect before you move on
+            </h2>
+            <p className="mt-1 text-sm text-muted">
+              Explaining your own code out loud is what turns a tutorial into understanding.
+            </p>
+            <ul className="mt-3 space-y-2">
+              {project.reflectionQuestions.map((question, index) => (
+                <li key={index} className="flex items-start gap-2 text-sm text-ink-soft">
+                  <span className="font-bold text-brand" aria-hidden>
+                    {index + 1}.
+                  </span>
+                  {question}
+                </li>
+              ))}
+            </ul>
+          </section>
         </div>
 
         {/* sidebar */}

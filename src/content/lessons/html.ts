@@ -4,6 +4,11 @@ export const htmlLessons: Lesson[] = [
   {
     slug: "html-your-first-page",
     title: "Your first web page",
+    objectives: [
+      "Explain what HTML is and how a browser reads it",
+      "Build a page with heading and paragraph tags",
+      "Describe the basic parts of an HTML document",
+    ],
     summary: "What HTML actually is, and how three tags create a page.",
     order: 1,
     minutes: 12,
@@ -148,6 +153,11 @@ export const htmlLessons: Lesson[] = [
   {
     slug: "html-text-structure",
     title: "Text, lists and structure",
+    objectives: [
+      "Format content with paragraphs, lists and emphasis",
+      "Choose the right heading level (h1–h6) for structure",
+      "Know when line breaks and horizontal rules are appropriate",
+    ],
     summary: "Paragraphs, lists, emphasis and line breaks — the everyday tags.",
     order: 2,
     minutes: 14,
@@ -287,6 +297,11 @@ export const htmlLessons: Lesson[] = [
   {
     slug: "html-links-images",
     title: "Links and images",
+    objectives: [
+      "Create links between pages with anchor tags",
+      "Add images with meaningful alt text",
+      "Choose when a link should open in a new tab",
+    ],
     summary:
       "Anchor tags, relative vs absolute URLs, and images with meaningful alt text.",
     order: 3,
@@ -448,6 +463,11 @@ export const htmlLessons: Lesson[] = [
   {
     slug: "html-forms",
     title: "Forms: capturing user input",
+    objectives: [
+      "Build a form with labels and the right input types",
+      "Connect every input to a visible label",
+      "Explain how input types improve the mobile keyboard",
+    ],
     summary:
       "The form element, input types, labels, buttons and the required attribute.",
     order: 4,
@@ -629,6 +649,11 @@ export const htmlLessons: Lesson[] = [
   {
     slug: "html-semantics",
     title: "Semantic HTML and accessibility",
+    objectives: [
+      "Replace generic divs with meaningful semantic elements",
+      "Describe how screen readers use page landmarks",
+      "Structure a page so it works for everyone",
+    ],
     summary:
       "header, nav, main, section, article and footer — and why meaningful markup opens your page to everyone.",
     order: 5,

@@ -79,6 +79,28 @@ export default async function LessonPage({ params }: Props) {
         </div>
       </header>
 
+      {/* -------------------------------------------------- lesson objectives */}
+      <section
+        aria-labelledby="objectives-heading"
+        className="max-w-3xl rounded-2xl border border-brand/25 bg-brand-soft/50 p-5"
+      >
+        <h2 id="objectives-heading" className="text-sm font-bold uppercase tracking-[0.14em] text-brand">
+          In this lesson you will
+        </h2>
+        <ul className="mt-3 space-y-2">
+          {lesson.objectives.map((objective) => (
+            <li key={objective} className="flex items-start gap-2 text-sm text-ink-soft">
+              <Icon name="check" size={15} className="mt-0.5 shrink-0 text-success" />
+              {objective}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-3 border-t border-brand/15 pt-3 text-xs text-muted">
+          ✓ Completion: submit the quiz at the end of the lesson. Hints cost a little XP, and you
+          can revisit the lesson anytime.
+        </p>
+      </section>
+
       <article className="max-w-3xl space-y-8">
         {/* ------------------------------------------------------- concept */}
         <section aria-labelledby="concept-heading">

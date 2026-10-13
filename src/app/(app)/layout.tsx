@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { requireUser } from "@/lib/auth";
+import { isAdmin } from "@/lib/db";
 import { getStats } from "@/lib/gamification";
 import { getNotifications } from "@/lib/queries";
 import { levelForXp, levelProgress } from "@/content";
@@ -25,6 +26,7 @@ export default async function ProtectedLayout({ children }: { children: ReactNod
         levelTitle: level.title,
         levelProgress: levelProgress(stats.xp),
         streak: stats.streak,
+        isAdmin: isAdmin(user.role),
       }}
       notifications={getNotifications(user.id).map((n) => ({
         id: n.id,

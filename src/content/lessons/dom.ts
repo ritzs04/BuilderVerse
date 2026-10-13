@@ -4,6 +4,11 @@ export const domLessons: Lesson[] = [
   {
     slug: "dom-selecting-elements",
     title: "Selecting elements",
+    objectives: [
+      "Find page elements with querySelector",
+      "Understand NodeList vs HTMLCollection",
+      "Keep references to elements you will reuse",
+    ],
     summary:
       "querySelector, querySelectorAll and getElementById — how JavaScript finds the element you want.",
     order: 1,
@@ -181,6 +186,11 @@ console.log(list.tagName); // "UL"`,
   {
     slug: "dom-events",
     title: "Listening for events",
+    objectives: [
+      "Attach listeners with addEventListener",
+      "Read useful data off the event object",
+      "Explain why preventDefault exists",
+    ],
     summary:
       "addEventListener, click and input events, the event object, preventDefault and event delegation.",
     order: 2,
@@ -386,6 +396,11 @@ list.addEventListener("click", function (event) {
   {
     slug: "dom-changing-content",
     title: "Changing content",
+    objectives: [
+      "Update text and classes on a live page",
+      "Create and remove elements dynamically",
+      "Build a small interactive feature end to end",
+    ],
     summary:
       "textContent, classList and style — plus creating and removing elements while the page runs.",
     order: 3,

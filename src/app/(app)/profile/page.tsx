@@ -16,7 +16,7 @@ import { PortfolioManager } from "@/components/profile/portfolio-manager";
 
 export const metadata: Metadata = {
   title: "Profile",
-  description: "Your Builder ID, badges, portfolio and saved ideas.",
+  description: "Your Builder Passport — ID, badges, portfolio and saved ideas.",
 };
 
 function formatDate(iso: string): string {
@@ -37,7 +37,7 @@ export default async function ProfilePage() {
 
   return (
     <div className="space-y-6">
-      <SectionHeading eyebrow="Your space" title="Builder ID" sub="Everything you have built and earned on BuilderVerse lives here." />
+      <SectionHeading eyebrow="Your space" title="Builder Passport" sub="Your unique Builder ID, everything you have built and earned on BuilderVerse." />
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* ------------------------------------------------ identity card */}
@@ -45,6 +45,9 @@ export default async function ProfilePage() {
           <Avatar emoji={user.avatar} size="xl" />
           <h1 className="mt-3 text-xl font-bold text-ink">{user.name}</h1>
           <p className="text-sm text-muted">@{user.username}</p>
+          <div className="mt-2">
+            <Pill tone="brand">🪪 {user.builder_id}</Pill>
+          </div>
           <p className="mt-2 text-sm text-ink-soft">{user.headline}</p>
 
           <div className="mt-3 flex flex-wrap justify-center gap-2">

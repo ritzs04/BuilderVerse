@@ -66,7 +66,8 @@ src/
     about/              # about page
     (auth)/             # login, signup, forgot/reset password
     (app)/              # authenticated shell (auth guard + sidebar/topbar/mobile nav)
-      dashboard/ learn/ think/ debug/ build/ ideas/ assistant/ search/ profile/ settings/
+      dashboard/ learn/ think/ debug/ build/ missions/ ideas/ welcome/ progress/
+      assistant/ search/ profile/ settings/
     actions/            # server actions: auth, progress, account, ai
   components/           # ui.tsx primitives, shell, client components per feature
   content/              # curriculum AS CODE — all static content + search
@@ -95,7 +96,7 @@ docker-compose.yml      # one-command deploy with a persistent data volume
 npm run test:e2e
 ```
 
-Five Playwright tests cover the marketing page, anonymous redirects, the **full learner journey** (signup → daily mission → lesson quiz → thinking puzzle → debug reveal → project checklist → bookmark → portfolio → settings → logout), the mobile shell + dark mode + search, and an **exactly-one-h1 accessibility check across all 16 app routes**. CI runs lint, typecheck, build, the e2e suite and a Docker image build + container health-check on every push.
+Five Playwright tests cover the marketing page, anonymous redirects, the **full learner journey** (onboarding → Builder's Oath → signup → Builder Passport with unique ID → daily missions → lesson objectives → lesson quiz → thinking puzzle → debug reveal → project checklist → bookmark → portfolio → settings → logout), the mobile shell + dark mode + search, and an **exactly-one-h1 accessibility check across all 25 routes** (every `page.tsx` in the app, public and auth surfaces included). CI runs lint, typecheck, build, the e2e suite and a Docker image build + container health-check on every push.
 
 ## Deploy
 

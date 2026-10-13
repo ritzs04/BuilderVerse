@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { first, run, isoNow } from "@/lib/db";
+import { first, run, isoNow, nextBuilderId } from "@/lib/db";
 import {
   hashPassword,
   verifyPassword,
@@ -15,6 +15,8 @@ import {
   loginSchema,
   forgotSchema,
   resetSchema,
+  preferencesSchema,
+  TOPIC_OPTIONS,
   firstIssue,
 } from "@/lib/validation";
 import { notify } from "@/lib/gamification";
@@ -49,26 +51,47 @@ export async function signupAction(
   }
 
   const id = randomUUID();
+
+  // Learning preferences are optional: a missing/invalid value never blocks
+  // account creation, it just falls back to "not set yet".
+  const prefs = preferencesSchema.safeParse({
+    experience: formData.get("experience") ?? "",
+    goal: formData.get("goal") ?? "",
+    study_time: formData.get("study_time") ?? "",
+    interests: formData.getAll("interests"),
+  });
+  const p = prefs.success ? prefs.data : { experience: "", goal: "", study_time: "", interests: [] };
+  const knownTopics = new Set<string>(TOPIC_OPTIONS.map((o) => o.value));
+  const interests = JSON.stringify(
+    (p.interests ?? []).filter((topic) => knownTopics.has(topic)),
+  );
+
   run(
-    `INSERT INTO users (id, name, username, email, password_hash, created_at)
-     VALUES (?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO users (id, builder_id, name, username, email, password_hash,
+       experience_level, learning_goal, study_time, interests, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     id,
+    nextBuilderId(),
     name,
     username,
     email,
     hashPassword(password),
+    p.experience || null,
+    p.goal || null,
+    p.study_time || null,
+    interests,
     isoNow(),
   );
 
   notify(id, {
     type: "welcome",
     title: "Welcome to BuilderVerse 👋",
-    body: "Start with your first lesson, or check today's mission on the dashboard.",
-    href: "/dashboard",
+    body: "Your Builder Passport is ready. Start with your first lesson, or check today's mission on the dashboard.",
+    href: "/welcome",
   });
 
   await startSession(id);
-  redirect("/dashboard");
+  redirect("/welcome");
 }
 
 export async function loginAction(

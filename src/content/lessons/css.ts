@@ -4,6 +4,11 @@ export const cssLessons: Lesson[] = [
   {
     slug: "css-selectors-box-model",
     title: "Selectors and the box model",
+    objectives: [
+      "Target elements with class, id and combinators",
+      "Explain padding, border and margin",
+      "Use box-sizing to control how width is calculated",
+    ],
     summary:
       "Where CSS lives (inline vs external), how selectors pick elements, which rule wins, and the box every element is made of.",
     order: 1,
@@ -192,6 +197,11 @@ h1 {
   {
     slug: "css-colors-typography",
     title: "Colors, type and spacing",
+    objectives: [
+      "Apply colors with hex, rgb and CSS variables",
+      "Build a readable type scale with sensible line heights",
+      "Use consistent spacing to make layouts feel calm",
+    ],
     summary:
       "Choosing colours that read well, building a small type scale, and using rem so your spacing stays consistent.",
     order: 2,
@@ -370,6 +380,11 @@ h1 {
   {
     slug: "css-flexbox",
     title: "Flexbox: rows that behave",
+    objectives: [
+      "Lay out rows and columns with flex container properties",
+      "Align and distribute items with justify-content and align-items",
+      "Make wrapping layouts work at any screen size",
+    ],
     summary:
       "display: flex, the main and cross axes, justify-content, align-items, gap and wrapping.",
     order: 3,
@@ -591,6 +606,11 @@ body {
   {
     slug: "css-grid-responsive",
     title: "Grid and responsive design",
+    objectives: [
+      "Build two-dimensional layouts with CSS grid",
+      "Adapt layouts to different screens with media queries",
+      "Use fr, minmax and auto-fit for flexible tracks",
+    ],
     summary:
       "Two-dimensional layouts with grid, fr units, and media queries that reshape the page for every screen.",
     order: 4,
@@ -798,6 +818,11 @@ body {
   {
     slug: "css-ui-polish",
     title: "Polish: hover, focus and motion",
+    objectives: [
+      "Add hover and focus states that help keyboard users",
+      "Use small transitions to give feedback",
+      "Respect prefers-reduced-motion for accessibility",
+    ],
     summary:
       "Interactive states, gentle transitions and colour contrast that everyone can read.",
     order: 5,

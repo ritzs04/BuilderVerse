@@ -12,15 +12,6 @@ export default async function SignupPage() {
   const user = await getSessionUser();
   if (user) redirect("/dashboard");
 
-  return (
-    <>
-      <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold tracking-tight text-ink">Become a Builder</h1>
-        <p className="mt-1.5 text-sm text-muted">
-          One account. Lessons, projects, puzzles and progress that stick around.
-        </p>
-      </div>
-      <SignupForm />
-    </>
-  );
+  // The multi-step SignupForm owns the page heading (one h1 per step).
+  return <SignupForm />;
 }

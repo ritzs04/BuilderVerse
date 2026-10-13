@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { requireUser } from "@/lib/auth";
-import { getProgress } from "@/lib/queries";
+import { getProgress, getPersonalIdeas } from "@/lib/queries";
 import { projectIdeas } from "@/content";
 import { SectionHeading, Pill } from "@/components/ui";
 import { IdeaBrowser } from "@/components/ideas/idea-browser";
+import { PersonalIdeas } from "@/components/ideas/personal-ideas";
 
 export const metadata: Metadata = {
   title: "Ideas Vault",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default async function IdeasPage() {
   const user = await requireUser();
   const progress = getProgress(user.id);
+  const mine = getPersonalIdeas(user.id);
 
   const items = projectIdeas.map((idea) => ({
     slug: idea.slug,
@@ -38,10 +40,9 @@ export default async function IdeasPage() {
         </div>
       </section>
 
-      <IdeaBrowser
-        items={items}
-        initiallyBookmarked={[...progress.bookmarkedIdeas]}
-      />
+      <IdeaBrowser items={items} initiallyBookmarked={[...progress.bookmarkedIdeas]} />
+
+      <PersonalIdeas ideas={mine} />
     </div>
   );
 }

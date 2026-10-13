@@ -19,17 +19,22 @@ export interface ShellUser {
   levelTitle: string;
   levelProgress: number;
   streak: number;
+  /** When true, show the administrator area link (§3). Read from the DB row. */
+  isAdmin: boolean;
 }
 
 const primaryNav = [
   { href: "/dashboard", label: "Dashboard", icon: "home" },
   { href: "/learn", label: "Learn", icon: "book" },
   { href: "/think", label: "Thinking Gym", icon: "brain" },
-  { href: "/debug", label: "Debugging", icon: "bug" },
+  { href: "/debug", label: "Error Companion", icon: "bug" },
   { href: "/build", label: "Projects", icon: "hammer" },
+  { href: "/missions", label: "Daily Missions", icon: "target" },
   { href: "/ideas", label: "Ideas Vault", icon: "lightbulb" },
   { href: "/assistant", label: "Builder AI", icon: "sparkles" },
-  { href: "/profile", label: "Profile", icon: "user" },
+  { href: "/progress", label: "My Progress", icon: "list" },
+  { href: "/profile", label: "Builder Passport", icon: "user" },
+  { href: "/settings", label: "Settings", icon: "settings" },
 ];
 
 const bottomNav = [
@@ -117,6 +122,14 @@ export function AppShell({
                 </button>
               </form>
             </div>
+            {user.isAdmin && (
+              <Link
+                href="/admin"
+                className="mt-2 flex items-center gap-1.5 text-xs font-semibold text-brand hover:underline"
+              >
+                <Icon name="shield" size={14} /> Admin area
+              </Link>
+            )}
           </div>
         </div>
       </aside>

@@ -44,6 +44,11 @@ export default async function DashboardPage() {
     .map((row) => getBadge(row.badge_slug))
     .filter((badge): badge is NonNullable<typeof badge> => Boolean(badge));
 
+  // Brand-new Builders (0 XP, nothing finished) get a welcoming first step —
+  // encouraging, never guilt-tripping (§6 of the product spec).
+  const isNewBuilder =
+    stats.xp === 0 && progress.completedLessons.size === 0 && progress.missions.size === 0;
+
   const recommendation = !missionDone
     ? { title: "Finish today's mission", body: mission.description, href: "#mission" }
     : resumeLesson
@@ -80,11 +85,31 @@ export default async function DashboardPage() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Pill>🪪 {user.builder_id}</Pill>
           <Pill tone="warning">🔥 {stats.streak} day streak</Pill>
           <Pill tone="brand">⚡ {stats.xp} XP</Pill>
           <Pill tone="accent">🏆 {stats.badgesEarned} badges</Pill>
         </div>
       </section>
+
+      {/* ------------------------------------------------ new builder welcome */}
+      {isNewBuilder && resumeLesson && (
+        <Card className="border-brand/30 bg-brand-soft/50">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="max-w-xl">
+              <h2 className="text-lg font-bold text-ink">Welcome, Builder — start here 👋</h2>
+              <p className="mt-1 text-sm leading-relaxed text-muted">
+                Everything begins with one small step. Your first lesson takes about{" "}
+                {resumeLesson.minutes} minutes — no experience needed, and nothing here is a
+                test. When you finish it, this dashboard starts filling up with your progress.
+              </p>
+            </div>
+            <LinkButton href={`/learn/${resumeLesson.pathSlug}/${resumeLesson.slug}`}>
+              Start my first lesson →
+            </LinkButton>
+          </div>
+        </Card>
+      )}
 
       {/* -------------------------------------------------------- main column */}
       <section className="grid gap-4 lg:grid-cols-3">

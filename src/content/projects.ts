@@ -113,6 +113,52 @@ export const guidedProjects: GuidedProject[] = [
         tip: "Done is a decision, not a feeling. Tick the last box, ship it, and start the next project while the momentum is warm.",
       },
     ],
+    testingChecklist: [
+      "2 + 2 shows 4, not 22 (digits append, they do not concatenate)",
+      "Pressing an operator twice in a row does not break the running total",
+      "Clear resets everything, including a pending operator",
+      "Backspace removes exactly one character and never leaves an empty display broken",
+      "Divide by zero shows a friendly message instead of Infinity or NaN",
+      "Pressing equals twice in a row does not keep adding",
+      "Decimal point can only be entered once in a number",
+      "Every button is at least 44px tall and reachable with a thumb on a phone",
+      "Keyboard typing does not throw an error in the console",
+      "The whole calculator still works after reloading with no console errors",
+    ],
+    commonMistakes: [
+      {
+        mistake: "Using `+` on strings so 2 + 2 becomes \"22\".",
+        fix: "Convert with `Number(value)` the moment you read it from the display, and store numbers rather than the display text.",
+      },
+      {
+        mistake: "Keeping state in many loose variables and losing track of which holds what.",
+        fix: "Use one clearly named state object: current value, stored value, and the pending operator. Three names, always the same three.",
+      },
+      {
+        mistake: "Reading which button was clicked by checking its position in the grid.",
+        fix: "Put a `data-` attribute on every button and read that. Position breaks the moment you rearrange the layout.",
+      },
+      {
+        mistake: "Forgetting to render the result, so the maths is right but the screen never changes.",
+        fix: "Route every state change through a single `render()` function and call it after each update.",
+      },
+      {
+        mistake: "Divide-by-zero producing Infinity or NaN in the display.",
+        fix: "Check the divisor before dividing and show a message, then require Clear before the next sum.",
+      },
+    ],
+    reflectionQuestions: [
+      "Why did you need to convert the display text to a number before doing arithmetic?",
+      "What breaks if a user presses an operator as their very first key, and how did you handle it?",
+      "Which part of the state was hardest to reason about, and would naming it differently have helped?",
+      "If you had to add a percentage button tomorrow, which function would you change and why?",
+    ],
+    extensions: [
+      "Add keyboard support so typing digits and Enter works exactly like clicking",
+      "Show the full calculation above the display so the history of the sum is visible",
+      "Add a memory button that stores and recalls a value",
+      "Implement true operator precedence so 2 + 3 × 4 gives 14",
+    ],
   },
   {
     slug: "weather-app",
@@ -220,6 +266,51 @@ export const guidedProjects: GuidedProject[] = [
         ],
         tip: "A working app with an honest error message feels more professional than a perfect app that breaks silently. Ship the version that fails gracefully.",
       },
+    ],
+    testingChecklist: [
+      "Turn off your network (dev tools → Offline) and confirm you see the friendly error, not a blank card",
+      "Search a city that does not exist and confirm you are told so instead of showing stale data",
+      "Press search twice quickly and confirm only the latest result is displayed",
+      "The loading state is visible for long enough to actually read it",
+      "Temperatures are shown with units and converted correctly between C and F",
+      "An empty search box does not fire a request",
+      "Reloading the page re-runs the last search or shows a clear starting state",
+      "No console errors appear in the network-error, not-found, and happy-path cases",
+      "The layout is readable at 360px wide with the description and temperature still on screen",
+    ],
+    commonMistakes: [
+      {
+        mistake: "Putting the API key straight into client-side code.",
+        fix: "For a learning project keep it in an environment variable and note in your README that a real app needs a server-side proxy.",
+      },
+      {
+        mistake: "Treating `fetch` as guaranteed to succeed.",
+        fix: "`fetch` only rejects on network failure. Check `response.ok` yourself and handle a non-2xx status as an error.",
+      },
+      {
+        mistake: "Forgetting `await`, so you try to read `.temp` on a Promise.",
+        fix: "`await` the response, then `await response.json()`. If a value prints as `[object Promise]`, an `await` is missing.",
+      },
+      {
+        mistake: "Rendering data from an earlier, slower request on top of the newest one.",
+        fix: "Track a request counter or `AbortController` and ignore responses that are no longer current.",
+      },
+      {
+        mistake: "Only testing the happy path, then shipping something that fails silently offline.",
+        fix: "Test offline first. An honest \"could not load weather\" message is a feature, not a failure.",
+      },
+    ],
+    reflectionQuestions: [
+      "Why is `response.ok` necessary even when `fetch` did not throw?",
+      "What did you do to stop an out-of-order response from overwriting the latest one?",
+      "Which failure surprised you most, and what would you add so a user is never left staring at a blank card?",
+      "How would you hide the API key if this had real users?",
+    ],
+    extensions: [
+      "Add a five-day forecast using the same endpoint's forecast data",
+      "Use the geolocation API to load weather for the current position on first visit",
+      "Show a simple icon and background colour that change with the conditions",
+      "Cache the last successful result in localStorage so offline users still see something useful",
     ],
   },
   {
@@ -329,6 +420,52 @@ export const guidedProjects: GuidedProject[] = [
         tip: "Knowing and stating what your app does not do is a senior habit. Practise it now while the stakes are low.",
       },
     ],
+    testingChecklist: [
+      "Only fake sample credentials were used — no real password was ever typed in",
+      "Entries survive a page reload and a browser restart",
+      "Editing an entry updates it instead of adding a duplicate",
+      "Deleting asks for confirmation and the entry is really gone afterwards",
+      "Search matches case-insensitively and shows a clear \"nothing found\" state",
+      "A required field left blank shows a validation message rather than saving an empty record",
+      "Copy-to-clipboard confirms success and degrades gracefully if permission is denied",
+      "Passwords are hidden by default with an explicit show/hide control",
+      "No entry data appears in the URL or in a form that could be submitted anywhere",
+      "The README states plainly that this is a learning demo, not a real vault",
+    ],
+    commonMistakes: [
+      {
+        mistake: "Encouraging users to store real passwords during testing.",
+        fix: "Seed the app with obviously fake sample credentials and say so in the README. Real secrets do not belong in a teaching project.",
+      },
+      {
+        mistake: "Assuming localStorage is secure.",
+        fix: "Say explicitly that it is not: any script on the page can read it. Document that a real vault needs encryption and a backend.",
+      },
+      {
+        mistake: "Saving on every keystroke and corrupting the stored array.",
+        fix: "Save on submit only, and write the whole array back after validating the record.",
+      },
+      {
+        mistake: "Using array index as an entry's identity, so deleting shifts everything.",
+        fix: "Give each entry its own unique id when it is created and look it up by that id.",
+      },
+      {
+        mistake: "Rendering the password in plain text so it is readable over a shoulder.",
+        fix: "Mask it by default and make revealing it a deliberate, visible action.",
+      },
+    ],
+    reflectionQuestions: [
+      "Why is localStorage unacceptable for a real password manager, and what would replace it?",
+      "How did you give each entry a stable identity, and what bug does that prevent?",
+      "Which security claim did you remove from your UI once you understood the limits?",
+      "What would a second user of this app need that your version cannot do?",
+    ],
+    extensions: [
+      "Add a simple password generator with a length slider and strength indicator",
+      "Add tag or category grouping with a filter",
+      "Add a \"copied\" confirmation with an auto-hiding toast",
+      "Write a short security note in the README explaining exactly what is and is not protected",
+    ],
   },
   {
     slug: "chat-application",
@@ -436,6 +573,51 @@ export const guidedProjects: GuidedProject[] = [
         tip: "Users will show you where your interface is unclear without meaning to. Their first hesitation is worth more than the feature you were planning to add.",
       },
     ],
+    testingChecklist: [
+      "Sending an empty or whitespace-only message does nothing",
+      "Shift+Enter inserts a newline while Enter sends (if you implemented that)",
+      "The view auto-scrolls to the newest message without scrolling the whole page",
+      "Reloading restores the conversation from storage",
+      "Very long messages wrap and do not break the bubble layout",
+      "Rapid repeated sends never render messages out of order",
+      "Every message has a visible author so it is unambiguous who said what",
+      "Keyboard-only navigation can reach the composer and the send button",
+      "The README clearly states this is a front-end demo with a simulated partner",
+    ],
+    commonMistakes: [
+      {
+        mistake: "Calling it a real-time chat when it has no backend.",
+        fix: "Label it a front-end demo and explain what a real app needs: a server, WebSockets, auth, and message persistence.",
+      },
+      {
+        mistake: "Appending messages without scrolling, so the newest one is off-screen.",
+        fix: "Set `scrollTop = scrollHeight` after each render, inside a container with a fixed height and `overflow-y: auto`.",
+      },
+      {
+        mistake: "Letting the composer grow until the send button falls off the page.",
+        fix: "Cap the textarea height, let it scroll internally, and keep the send button pinned in the same row.",
+      },
+      {
+        mistake: "Sanitising nothing and rendering user text as HTML.",
+        fix: "Use `textContent` or a safe render path. Never inject raw user input with `innerHTML`.",
+      },
+      {
+        mistake: "Using array index as a message key, so edits and reorders go wrong.",
+        fix: "Give every message a unique id at creation time.",
+      },
+    ],
+    reflectionQuestions: [
+      "What exactly is missing between your demo and a chat two real people could use?",
+      "Why is `innerHTML` dangerous for user-typed text, and what did you use instead?",
+      "How does your simulated partner decide what to reply, and where does that logic live?",
+      "Which accessibility problem did you find when you tried using only the keyboard?",
+    ],
+    extensions: [
+      "Add a typing indicator that appears before each simulated reply",
+      "Add simple keyword-based replies so the demo feels less repetitive",
+      "Add emoji reactions to individual messages",
+      "Add a conversation reset with a confirmation step",
+    ],
   },
   {
     slug: "personal-portfolio",
@@ -542,6 +724,52 @@ export const guidedProjects: GuidedProject[] = [
         ],
         tip: "Ship with two projects rather than waiting for five. You can add the rest as you build them, and the link is already working.",
       },
+    ],
+    testingChecklist: [
+      "Every project link opens and points at the right destination",
+      "Every link is a real link — no `#` placeholders left in the code",
+      "Tab through the whole page and confirm a visible focus ring on each element",
+      "All images have meaningful alt text (or are decorative and marked as such)",
+      "The layout has no horizontal scrollbar at 360px wide",
+      "Text passes a contrast check in both light and dark themes",
+      "The contact link actually opens a mail client or form",
+      "The heading order goes h1 → h2 → h3 with no skipped levels",
+      "Page title and meta description are specific to you, not boilerplate",
+      "The site loads over HTTPS with no mixed-content warnings",
+    ],
+    commonMistakes: [
+      {
+        mistake: "Linking to project cards that lead nowhere.",
+        fix: "Ship with the two projects you actually have and link each one to a repository or live URL. A dead link costs more trust than a shorter list.",
+      },
+      {
+        mistake: "Using lorem ipsum and never replacing it.",
+        fix: "Write real copy, even if it is rough. Vague text is the fastest way to look unfinished.",
+      },
+      {
+        mistake: "Building only for your own 15-inch laptop screen.",
+        fix: "Set the viewport to 360px in dev tools and fix the layout there first, then scale up.",
+      },
+      {
+        mistake: "Using colour alone to signal state or meaning.",
+        fix: "Add an icon or text label alongside the colour so it still reads without colour vision.",
+      },
+      {
+        mistake: "Styling `outline: none` to remove focus rings.",
+        fix: "Style the focus ring instead of removing it. A visible focus indicator is a requirement, not a decoration.",
+      },
+    ],
+    reflectionQuestions: [
+      "What does your hero sentence say you build, and is it specific enough to remember?",
+      "Which project on your page best shows a problem you solved, and does the copy say so?",
+      "What did you find when you navigated the page using only the keyboard?",
+      "If a recruiter spent thirty seconds here, what would they remember?",
+    ],
+    extensions: [
+      "Add a dark/light theme toggle that remembers the choice",
+      "Add a filter so visitors can view projects by technology",
+      "Write a short case study page for your strongest project",
+      "Add a Lighthouse audit badge or note your measured performance score",
     ],
   },
 ];

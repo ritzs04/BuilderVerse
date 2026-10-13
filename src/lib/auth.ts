@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
-import { first, run, isoNow, type UserRow } from "@/lib/db";
+import { first, run, isoNow, isAdmin, type UserRow } from "@/lib/db";
 
 const SESSION_COOKIE = "bv_session";
 const SESSION_DAYS = 30;
@@ -80,6 +80,25 @@ export async function requireUser(): Promise<UserRow> {
 export async function requireUserOrThrow(): Promise<UserRow> {
   const user = await getSessionUser();
   if (!user) throw new Error("You need to be signed in to do that.");
+  return user;
+}
+
+/**
+ * Administrator pages. This is the real security boundary — the role comes
+ * from the database row, never from the client (§3).
+ */
+export async function requireAdmin(): Promise<UserRow> {
+  const user = await getSessionUser();
+  if (!user) redirect("/login");
+  if (!isAdmin(user.role)) redirect("/dashboard");
+  return user;
+}
+
+/** Administrator server actions. Throws instead of redirecting. */
+export async function requireAdminOrThrow(): Promise<UserRow> {
+  const user = await getSessionUser();
+  if (!user) throw new Error("You need to be signed in to do that.");
+  if (!isAdmin(user.role)) throw new Error("You need administrator access to do that.");
   return user;
 }
 

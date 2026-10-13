@@ -90,7 +90,10 @@ export async function submitQuizAction(
     ? lesson.xp + (score === total ? 15 : 0) - (firstCompletion ? hintPenalty : 0)
     : 0;
 
-  const result = reward(user.id, Math.max(0, xp));
+  const result = reward(user.id, Math.max(0, xp), {
+    kind: "lesson",
+    reason: `Lesson completed: ${lesson.title} · quiz ${score}/${total}`,
+  });
   revalidatePath("/learn", "layout");
   revalidatePath("/dashboard");
   return { ok: true, reward: result, score, total };
@@ -132,7 +135,10 @@ export async function submitThinkingAction(
 
   const hintPenalty = Math.min(hintsUsed, challenge.hints.length) * 5;
   const xp = alreadySolved ? 0 : Math.max(10, challenge.xp - hintPenalty);
-  const result = reward(user.id, xp);
+  const result = reward(user.id, xp, {
+    kind: "thinking",
+    reason: `Thinking Gym solved: ${challenge.title}`,
+  });
 
   return {
     ok: true,
@@ -209,7 +215,10 @@ export async function submitDebugAction(
 
   const hintPenalty = Math.min(hintsUsed, challenge.hints.length) * 5;
   const xp = alreadySolved ? 0 : Math.max(10, challenge.xp - hintPenalty);
-  const result = reward(user.id, xp);
+  const result = reward(user.id, xp, {
+    kind: "debug",
+    reason: `Error Companion fixed: ${challenge.title}`,
+  });
 
   return {
     ok: true,
@@ -288,7 +297,10 @@ export async function toggleProjectStepAction(
 
   let result: RewardResult | undefined;
   if (allDone && row?.completed !== 1) {
-    result = reward(user.id, PROJECT_XP[project.difficulty] ?? 120);
+    result = reward(user.id, PROJECT_XP[project.difficulty] ?? 120, {
+      kind: "project",
+      reason: `Project completed: ${project.title}`,
+    });
     revalidatePath("/build");
     revalidatePath("/dashboard");
   }
@@ -332,7 +344,10 @@ export async function completeMissionAction(
     isoNow(),
   );
 
-  const result = reward(user.id, mission.xp);
+  const result = reward(user.id, mission.xp, {
+    kind: "mission",
+    reason: `Daily mission: ${mission.title}`,
+  });
   revalidatePath("/dashboard");
   return { ok: true, alreadyDone: false, reward: result };
 }

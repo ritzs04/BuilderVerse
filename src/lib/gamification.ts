@@ -254,14 +254,43 @@ export interface RewardResult {
   badges: Badge[];
 }
 
+export interface RewardOptions {
+  /** Skip the daily-streak update (used for repeat actions that earn no XP). */
+  touchStreak?: boolean;
+  /**
+   * Human-readable reason for the XP, written to the progress-history ledger
+   * (section 13 of the product spec). Omit for internal 0-XP bookkeeping calls.
+   */
+  reason?: string;
+  /** Category the reason belongs to (lesson, thinking, debug, project, mission...). */
+  kind?: string;
+}
+
+/** Writes one row of the XP ledger so students can see how they earned XP. */
+function logXpEvent(userId: string, amount: number, kind: string, label: string): void {
+  if (amount <= 0) return;
+  run(
+    "INSERT INTO xp_events (id, user_id, amount, kind, label, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+    randomUUID(),
+    userId,
+    amount,
+    kind,
+    label,
+    isoNow(),
+  );
+}
+
 export function reward(
   userId: string,
   xp: number,
-  options: { touchStreak?: boolean } = {},
+  options: RewardOptions = {},
 ): RewardResult {
   const streak = options.touchStreak === false ? readStreak(userId) : touchActivity(userId);
   const xpResult = awardXp(userId, xp);
   const newBadges = evaluateBadges(userId);
+  if (options.reason) {
+    logXpEvent(userId, xpResult.gained, options.kind ?? "general", options.reason);
+  }
 
   return {
     xpGained: xpResult.gained,

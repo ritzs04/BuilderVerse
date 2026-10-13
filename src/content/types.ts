@@ -32,6 +32,8 @@ export interface LessonSection {
 export interface Lesson {
   slug: string;
   title: string;
+  /** What the student will be able to do after this lesson (§8 of the spec). */
+  objectives: string[];
   summary: string;
   order: number;
   minutes: number;
@@ -146,6 +148,14 @@ export interface GuidedProject {
   /** Checklist items shown on the project page (also used for progress). */
   checklist: string[];
   stages: ProjectStage[];
+  /** §11 — how to prove the project actually works before showing anyone. */
+  testingChecklist: string[];
+  /** §11 — mistakes beginners reliably make on this project, and the fix. */
+  commonMistakes: { mistake: string; fix: string }[];
+  /** §11 — questions that turn a finished build into understanding. */
+  reflectionQuestions: string[];
+  /** §11 — optional stretch goals once the core build works. */
+  extensions: string[];
 }
 
 export interface ProjectIdea {

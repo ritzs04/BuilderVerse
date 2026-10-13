@@ -1,8 +1,19 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { changePasswordAction, deleteAccountAction, updateProfileAction } from "@/app/actions/account";
+import {
+  changePasswordAction,
+  deleteAccountAction,
+  updateLearningPreferencesAction,
+  updateProfileAction,
+} from "@/app/actions/account";
 import type { AccountResult } from "@/app/actions/account";
+import {
+  EXPERIENCE_OPTIONS,
+  GOAL_OPTIONS,
+  STUDY_TIME_OPTIONS,
+  TOPIC_OPTIONS,
+} from "@/lib/validation";
 import { Button, Input, Textarea, Pill } from "@/components/ui";
 
 const ok: AccountResult = { ok: true };
@@ -68,6 +79,114 @@ export function ProfileForm({
       <div className="flex flex-wrap items-center gap-3">
         <Button type="submit" disabled={pending}>
           {pending ? "Saving…" : "Save profile"}
+        </Button>
+        {state.ok && "message" in state && state.message && (
+          <Pill tone="success">{state.message}</Pill>
+        )}
+        {!state.ok && <Pill tone="danger">{state.error}</Pill>}
+      </div>
+    </form>
+  );
+}
+
+/* ------------------------------------------- learning preferences (onboarding) */
+
+export function LearningPreferencesForm({
+  experience,
+  goal,
+  studyTime,
+  interests,
+}: {
+  experience: string | null;
+  goal: string | null;
+  studyTime: string | null;
+  interests: string[];
+}) {
+  const [state, formAction, pending] = useActionState(updateLearningPreferencesAction, ok);
+
+  return (
+    <form action={formAction} className="space-y-4">
+      <div className="grid gap-4 sm:grid-cols-3">
+        <div>
+          <label htmlFor="experience" className="mb-1 block text-sm font-semibold text-ink">
+            Current experience
+          </label>
+          <select
+            id="experience"
+            name="experience"
+            defaultValue={experience ?? ""}
+            className="bv-input w-full text-sm"
+          >
+            <option value="">Not set</option>
+            {EXPERIENCE_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="goal" className="mb-1 block text-sm font-semibold text-ink">
+            Learning goal
+          </label>
+          <select
+            id="goal"
+            name="goal"
+            defaultValue={goal ?? ""}
+            className="bv-input w-full text-sm"
+          >
+            <option value="">Not set</option>
+            {GOAL_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="study_time" className="mb-1 block text-sm font-semibold text-ink">
+            Preferred study time
+          </label>
+          <select
+            id="study_time"
+            name="study_time"
+            defaultValue={studyTime ?? ""}
+            className="bv-input w-full text-sm"
+          >
+            <option value="">Whenever I can</option>
+            {STUDY_TIME_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      <fieldset>
+        <legend className="mb-2 block text-sm font-semibold text-ink">Topics of interest</legend>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {TOPIC_OPTIONS.map((topic) => (
+            <label
+              key={topic.value}
+              className="flex cursor-pointer items-center gap-2 rounded-xl border border-line px-3 py-2 text-sm text-ink-soft transition hover:border-brand/40"
+            >
+              <input
+                type="checkbox"
+                name="interests"
+                value={topic.value}
+                defaultChecked={interests.includes(topic.value)}
+                className="size-4 accent-[var(--bv-brand)]"
+              />
+              {topic.label}
+            </label>
+          ))}
+        </div>
+      </fieldset>
+
+      <div className="flex flex-wrap items-center gap-3">
+        <Button type="submit" disabled={pending} variant="secondary">
+          {pending ? "Saving…" : "Save learning preferences"}
         </Button>
         {state.ok && "message" in state && state.message && (
           <Pill tone="success">{state.message}</Pill>

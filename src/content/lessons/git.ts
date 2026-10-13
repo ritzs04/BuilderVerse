@@ -4,6 +4,11 @@ export const gitLessons: Lesson[] = [
   {
     slug: "git-commits-basics",
     title: "Your first commits",
+    objectives: [
+      "Initialize a repository and stage files",
+      "Write a commit message someone else can understand",
+      "Read your history with status and log",
+    ],
     summary:
       "What version control is, and how init, add and commit give you a safety net for every change.",
     order: 1,
@@ -140,6 +145,11 @@ git log --oneline`,
   {
     slug: "git-github-remotes",
     title: "Remotes, push, pull and branches",
+    objectives: [
+      "Connect a local repository to a GitHub remote",
+      "Push and pull changes without losing work",
+      "Create a branch and merge it back safely",
+    ],
     summary:
       "GitHub as your project's second copy: cloning, pushing, pulling, and branches as a safety net.",
     order: 2,

@@ -4,6 +4,11 @@ export const apiLessons: Lesson[] = [
   {
     slug: "apis-fetch-basics",
     title: "APIs and fetch basics",
+    objectives: [
+      "Explain what an API is in plain English",
+      "Make a GET request with fetch",
+      "Parse a JSON response into JavaScript values",
+    ],
     summary:
       "What an API is, how fetch asks for data, and how to turn a JSON response into something you can show.",
     order: 1,
@@ -202,6 +207,11 @@ fetch("https://official-joke-api.appspot.com/random_joke")
   {
     slug: "apis-async-errors",
     title: "Async, loading and error states",
+    objectives: [
+      "Show loading states while data is on the way",
+      "Catch failed requests with try/catch",
+      "Explain why fetch needs await",
+    ],
     summary:
       "async/await, try/catch and the loading states that keep a page honest when requests are slow or broken.",
     order: 2,

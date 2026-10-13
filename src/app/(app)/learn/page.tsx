@@ -11,9 +11,38 @@ export const metadata: Metadata = {
   description: "Structured learning paths that take you from first tag to full project.",
 };
 
+/**
+ * `users.interests` is stored as a JSON array of topic keys, e.g.
+ * `["html","javascript"]`. Parsed defensively because the column is nullable
+ * and older rows may hold junk.
+ */
+function parseInterests(value: string | null | undefined): string[] {
+  if (!value) return [];
+  try {
+    const parsed: unknown = JSON.parse(value);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item): item is string => typeof item === "string");
+  } catch {
+    // Tolerate a legacy comma-separated value rather than crashing the page.
+    return value
+      .split(",")
+      .map((part) => part.trim().toLowerCase())
+      .filter(Boolean);
+  }
+}
+
 export default async function LearnPage() {
   const user = await requireUser();
   const progress = getProgress(user.id);
+
+  // §16 — recommend based on the student's saved interests, then their learning
+  // goal, before falling back to the natural curriculum order.
+  const interests = parseInterests(user.interests);
+  const recommendedSlug =
+    learningPaths.find((path) => interests.includes(path.slug))?.slug ??
+    (user.learning_goal === "logic" || user.learning_goal === "projects"
+      ? "javascript"
+      : null);
 
   const rows = learningPaths.map((path) => {
     const lessons = lessonsForPath(path.slug);
@@ -26,6 +55,15 @@ export default async function LearnPage() {
       lessons.find((lesson) => !progress.completedLessons.has(lesson.slug)) ?? null;
     return { path, lessons, done, inProgress, nextLesson };
   });
+
+  // A path the student said they were interested in floats to the front,
+  // unless they have already started it (progress beats preference).
+  const ordered = recommendedSlug
+    ? [
+        ...rows.filter((row) => row.path.slug === recommendedSlug && row.done === 0),
+        ...rows.filter((row) => row.path.slug !== recommendedSlug),
+      ]
+    : rows;
 
   const totalLessons = rows.reduce((sum, row) => sum + row.lessons.length, 0);
   const totalDone = rows.reduce((sum, row) => sum + row.done, 0);
@@ -51,8 +89,9 @@ export default async function LearnPage() {
       <ProgressBar value={totalDone} max={totalLessons || 1} label="Overall curriculum" />
 
       <section className="grid gap-4 sm:grid-cols-2">
-        {rows.map(({ path, lessons, done, nextLesson }) => {
+        {ordered.map(({ path, lessons, done, nextLesson }) => {
           const complete = lessons.length > 0 && done === lessons.length;
+          const recommended = path.slug === recommendedSlug && done === 0;
           return (
             <Card key={path.slug} className="flex flex-col">
               <div className="flex items-start justify-between gap-3">
@@ -62,13 +101,16 @@ export default async function LearnPage() {
                 >
                   <Icon name={path.icon} size={20} />
                 </span>
-                {complete ? (
-                  <Pill tone="success">✓ Complete</Pill>
-                ) : done > 0 ? (
-                  <Pill tone="brand">In progress</Pill>
-                ) : (
-                  <Pill>{lessons.length} lessons</Pill>
-                )}
+                <div className="flex flex-wrap justify-end gap-1.5">
+                  {recommended && <Pill tone="brand">★ Recommended</Pill>}
+                  {complete ? (
+                    <Pill tone="success">✓ Complete</Pill>
+                  ) : done > 0 ? (
+                    <Pill tone="brand">In progress</Pill>
+                  ) : (
+                    <Pill>{lessons.length} lessons</Pill>
+                  )}
+                </div>
               </div>
 
               <h2 className="mt-3 text-lg font-bold text-ink">{path.title}</h2>

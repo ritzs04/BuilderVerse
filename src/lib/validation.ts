@@ -1,5 +1,21 @@
 import { z } from "zod";
 
+/**
+ * Categories a student can file their own Ideas Vault entry under (§14).
+ * Mirrors the social-impact categories used by the curated idea bank.
+ */
+export const IDEA_CATEGORIES = [
+  "education",
+  "safety",
+  "accessibility",
+  "environment",
+  "community",
+  "productivity",
+  "health",
+  "civic",
+  "other",
+] as const;
+
 export const signupSchema = z.object({
   name: z
     .string()
@@ -83,6 +99,72 @@ export const changePasswordSchema = z.object({
   confirm: z.string(),
 });
 
+/* -------------------------------------------------- learning preferences */
+
+/** Option sets shared by the onboarding flow and the settings page. */
+export const EXPERIENCE_OPTIONS = [
+  { value: "beginner", label: "Complete beginner" },
+  { value: "basic", label: "Basic knowledge" },
+  { value: "projects", label: "Some project experience" },
+] as const;
+
+export const GOAL_OPTIONS = [
+  { value: "coding", label: "Learn coding" },
+  { value: "logic", label: "Improve logical thinking" },
+  { value: "projects", label: "Build projects" },
+  { value: "portfolio", label: "Prepare a portfolio" },
+  { value: "explore", label: "Explore technology" },
+] as const;
+
+export const STUDY_TIME_OPTIONS = [
+  { value: "morning", label: "Morning" },
+  { value: "afternoon", label: "Afternoon" },
+  { value: "evening", label: "Evening" },
+  { value: "night", label: "Night" },
+] as const;
+
+export const TOPIC_OPTIONS = [
+  { value: "html", label: "HTML" },
+  { value: "css", label: "CSS" },
+  { value: "javascript", label: "JavaScript" },
+  { value: "dom", label: "DOM manipulation" },
+  { value: "apis", label: "APIs & async JavaScript" },
+  { value: "git", label: "Git & GitHub" },
+  { value: "games", label: "Games" },
+  { value: "ai", label: "AI" },
+  { value: "cybersecurity", label: "Cyber security" },
+  { value: "accessibility", label: "Accessibility" },
+] as const;
+
+function optionalChoice(options: readonly { value: string }[]) {
+  return z
+    .string()
+    .optional()
+    .refine((v) => v === undefined || v === "" || options.some((o) => o.value === v), {
+      message: "Pick one of the options.",
+    });
+}
+
+/**
+ * Learning preferences collected during onboarding (optional — a missing or
+ * invalid value never blocks account creation, it just falls back to defaults).
+ */
+export const preferencesSchema = z.object({
+  experience: optionalChoice(EXPERIENCE_OPTIONS),
+  goal: optionalChoice(GOAL_OPTIONS),
+  study_time: optionalChoice(STUDY_TIME_OPTIONS),
+  interests: z.array(z.string()).max(12, "Pick up to 12 topics.").optional(),
+});
+
+/** Label for a stored option value (falls back to the raw value). */
+export function optionLabel(
+  options: readonly { value: string; label: string }[],
+  value: string | null | undefined,
+): string {
+  if (!value) return "";
+  return options.find((o) => o.value === value)?.label ?? value;
+}
+
 export const portfolioSchema = z.object({
   name: z.string().trim().min(2, "Give your project a name.").max(60),
   description: z
@@ -105,6 +187,31 @@ export const portfolioSchema = z.object({
       message: "Enter a full URL like https://yourapp.vercel.app",
     }),
 });
+
+/** Ideas Vault — an idea the student writes themselves (§14). */
+export const personalIdeaSchema = z.object({
+  title: z
+    .string()
+    .trim()
+    .min(3, "Give your idea a short title (at least 3 characters).")
+    .max(80, "Keep the title under 80 characters."),
+  problem: z
+    .string()
+    .trim()
+    .min(20, "Describe the problem in at least 20 characters — what goes wrong today?")
+    .max(500),
+  who: z.string().trim().max(160, "Keep that under 160 characters.").optional().default(""),
+  solution: z
+    .string()
+    .trim()
+    .max(500, "Keep that under 500 characters.")
+    .optional()
+    .default(""),
+  skills: z.string().trim().max(160, "Keep that under 160 characters.").optional().default(""),
+  category: z.enum(IDEA_CATEGORIES),
+});
+
+export type PersonalIdeaInput = z.infer<typeof personalIdeaSchema>;
 
 /** Formats a ZodError into a single friendly message. */
 export function firstIssue(error: z.ZodError): string {

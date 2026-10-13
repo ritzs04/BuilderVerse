@@ -19,11 +19,26 @@ function freshAccount() {
 async function signup(page: Page) {
   const account = freshAccount();
   await page.goto("/signup");
+
+  // Step 1 — welcome
+  await page.getByRole("button", { name: /^Start my journey$/ }).click();
+  // Step 2 — Builder's Oath
+  await page.getByRole("button", { name: /I'm Ready to Begin/ }).click();
+  // Step 3 — account details
   await page.getByLabel("Your name").fill(account.name);
   await page.getByLabel("Username").fill(account.username);
   await page.getByLabel("Email").fill(account.email);
   await page.getByLabel("Password", { exact: true }).fill(account.password);
-  await page.getByRole("button", { name: "Create my Builder account" }).click();
+  await page.getByRole("button", { name: /^Next$/ }).click();
+  // Step 4 — learning preferences (optional) → create the account
+  await page.getByLabel("Learning goal").selectOption("projects");
+  await page.getByRole("button", { name: /Create my Builder account/ }).click();
+
+  // Builder Passport celebration page with a unique BV- ID
+  await page.waitForURL("**/welcome");
+  await expect(page.getByText(/BV-\d{6}/).first()).toBeVisible();
+
+  await page.getByRole("link", { name: /^Go to my dashboard$/ }).click();
   await page.waitForURL("**/dashboard");
   await expect(page.getByRole("heading", { name: /Welcome back/ })).toBeVisible();
 }
@@ -60,9 +75,16 @@ test.describe("BuilderVerse", () => {
     await page.getByRole("button", { name: "Mark mission complete" }).click();
     await expect(page.getByText("Mission complete")).toBeVisible();
 
+    // -------------------------------------------------- daily missions nav
+    await page.getByRole("link", { name: "Daily Missions" }).click();
+    await expect(page.getByRole("heading", { level: 1, name: "Daily Missions" })).toBeVisible();
+    await expect(page.getByText("How missions work")).toBeVisible();
+    await expect(page.getByText("Mission history")).toBeVisible();
+
     // ------------------------------------------------------------ lesson
     await page.goto("/learn/html/html-your-first-page");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.getByText("In this lesson you will")).toBeVisible();
 
     const fieldsets = page.locator("fieldset");
     const questionCount = await fieldsets.count();
@@ -100,12 +122,36 @@ test.describe("BuilderVerse", () => {
     await firstStep.click();
     await expect(firstStep).toHaveAttribute("aria-pressed", "true");
 
+    // ------------------------------------------------------- project guidance
+    await page.goto("/build/calculator");
+    await expect(page.getByRole("heading", { name: "Mistakes most people make here" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Before you call it finished/ })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Reflect before you move on" })).toBeVisible();
+    // Guidance is real content, not a placeholder.
+    await expect(page.getByText(/Fix: /).first()).toBeVisible();
+
+    // ------------------------------------------------------ progress history
+    await page.goto("/progress");
+    await expect(
+      page.getByRole("heading", { level: 1, name: /How you earned every point/i }),
+    ).toBeVisible();
+
     // ------------------------------------------------------------- ideas
     await page.goto("/ideas");
     const firstIdeaCard = page.locator("div.grid.gap-4 > div").first();
     const bookmark = firstIdeaCard.locator("button[aria-pressed]");
     await bookmark.click();
     await expect(bookmark).toHaveAttribute("aria-pressed", "true");
+
+    // --------------------------------------------------- my own idea (§14)
+    await page.getByRole("button", { name: /Add my own idea/ }).click();
+    await page.getByLabel("Idea title").fill("Campus Lost and Found");
+    await page
+      .getByLabel("What problem does it solve?")
+      .fill("Students lose items on campus with no central place to report them.");
+    await page.getByRole("button", { name: /Save my idea/ }).click();
+    await expect(page.getByText("Saved to your Ideas Vault", { exact: false })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Campus Lost and Found" })).toBeVisible();
 
     // -------------------------------------------------------- portfolio
     await page.goto("/profile#portfolio");
@@ -157,6 +203,7 @@ test.describe("BuilderVerse", () => {
     await signup(page);
 
     const routes = [
+      "/welcome",
       "/dashboard",
       "/learn",
       "/learn/html",
@@ -167,12 +214,22 @@ test.describe("BuilderVerse", () => {
       "/debug/typo-in-variable",
       "/build",
       "/build/calculator",
+      "/missions",
+      "/progress",
       "/ideas",
       "/ideas/student-study-planner",
       "/assistant",
       "/search?q=flexbox",
       "/profile",
       "/settings",
+      // Public and auth surfaces: a missing or duplicated heading here is just as
+      // much an accessibility bug as it is on an authenticated page.
+      "/",
+      "/about",
+      "/login",
+      "/signup",
+      "/forgot-password",
+      "/reset-password",
     ];
 
     for (const route of routes) {
@@ -180,5 +237,21 @@ test.describe("BuilderVerse", () => {
       const count = await page.locator("h1").count();
       expect(count, `${route} should render exactly one h1`).toBe(1);
     }
+  });
+
+  test("students cannot reach the administrator area", async ({ page }) => {
+    // §3 — the admin area is guarded server-side. A freshly signed-up account
+    // is a Student, so hitting /admin directly must bounce them to the student
+    // dashboard, not render any admin UI.
+    await signup(page);
+
+    await page.goto("/admin");
+    await page.waitForURL("**/dashboard");
+
+    await page.goto("/admin/users");
+    await page.waitForURL("**/dashboard");
+
+    // No admin-only chrome leaks into the student shell.
+    await expect(page.getByRole("link", { name: /Admin area/ })).toHaveCount(0);
   });
 });
