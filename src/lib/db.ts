@@ -8,39 +8,20 @@ import Database from "better-sqlite3";
  * Only *user data* lives here (accounts, progress, XP, badges...).
  * Curriculum content (lessons, challenges, ideas, projects) ships with the
  * code in `src/content` so it stays versioned, typed and easy to update.
+ *
+ * Row shapes are declared in `./db-types` so client components can reference
+ * them with `import type` without dragging `better-sqlite3` into the browser.
  */
-
-export interface UserRow {
-  id: string;
-  /** Public, unique Builder Passport ID, e.g. `BV-000001`. */
-  builder_id: string;
-  name: string;
-  username: string;
-  email: string;
-  password_hash: string;
-  avatar: string;
-  headline: string;
-  github_url: string | null;
-  website_url: string | null;
-  theme: "light" | "dark" | "system";
-  /**
-   * Access role: `"student"` (default) or `"admin"`. Grants the administrator
-   * area only. Never trusted from the client — always read from this row.
-   */
-  role: string;
-  notify_missions: number;
-  /** Onboarding learning preferences (all optional, editable in settings). */
-  experience_level: string | null;
-  learning_goal: string | null;
-  study_time: string | null;
-  /** JSON array of topic keys, e.g. `["html","javascript"]`. */
-  interests: string | null;
-  xp: number;
-  streak: number;
-  longest_streak: number;
-  last_active_date: string | null;
-  created_at: string;
-}
+// Re-exported so existing modules keep importing row shapes from here, while
+// client components can import them from `@/lib/db-types` instead (no runtime
+// dependency on better-sqlite3).
+export type {
+  UserRow,
+  UserRole,
+  CertificateRow,
+  PortfolioProjectRow,
+  XpEventRow,
+} from "./db-types";
 
 export interface SessionRow {
   token: string;
@@ -67,18 +48,6 @@ export interface NotificationRow {
   created_at: string;
 }
 
-export interface PortfolioProjectRow {
-  id: string;
-  user_id: string;
-  name: string;
-  description: string;
-  tech: string;
-  difficulty: string;
-  github_url: string | null;
-  live_url: string | null;
-  completed_date: string | null;
-  created_at: string;
-}
 
 export interface AiConversationRow {
   id: string;
@@ -103,15 +72,7 @@ export interface PersonalIdeaRow {
   created_at: string;
 }
 
-/** One row of the XP ledger — why the student earned XP (progress history, §13). */
-export interface XpEventRow {
-  id: string;
-  user_id: string;
-  amount: number;
-  kind: string;
-  label: string;
-  created_at: string;
-}
+
 
 const SCHEMA = `
 CREATE TABLE IF NOT EXISTS users (
@@ -121,7 +82,7 @@ CREATE TABLE IF NOT EXISTS users (
   username TEXT NOT NULL UNIQUE,
   email TEXT NOT NULL UNIQUE,
   password_hash TEXT NOT NULL,
-  avatar TEXT NOT NULL DEFAULT '🛠️',
+  avatar TEXT NOT NULL DEFAULT '≡ƒ¢á∩╕Å',
   headline TEXT NOT NULL DEFAULT 'Learning to build.',
   github_url TEXT,
   website_url TEXT,
@@ -268,12 +229,30 @@ CREATE TABLE IF NOT EXISTS xp_events (
   created_at TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS certificates (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  path_id TEXT NOT NULL,
+  path_name TEXT NOT NULL,
+  level TEXT NOT NULL,
+  display_name TEXT NOT NULL,
+  template TEXT NOT NULL DEFAULT 'classic',
+  photo TEXT,
+  revoked INTEGER NOT NULL DEFAULT 0,
+  publicly_shared INTEGER NOT NULL DEFAULT 0,
+  reissue_of TEXT,
+  replaced_by TEXT,
+  issued_at TEXT NOT NULL,
+  created_at TEXT NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_notifications_user ON notifications(user_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_attempts_user ON challenge_attempts(user_id, challenge_slug);
 CREATE INDEX IF NOT EXISTS idx_debug_attempts_user ON debug_attempts(user_id, debug_slug);
 CREATE INDEX IF NOT EXISTS idx_personal_ideas_user ON personal_ideas(user_id, created_at);
 CREATE INDEX IF NOT EXISTS idx_xp_events_user ON xp_events(user_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_certificates_user ON certificates(user_id, issued_at);
 `;
 
 type GlobalWithDb = typeof globalThis & { __bvDb?: Database.Database };

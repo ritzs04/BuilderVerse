@@ -15,6 +15,7 @@ export const guidedProjects: GuidedProject[] = [
     icon: "calculator",
     color: "violet",
     tech: ["HTML", "CSS", "JavaScript"],
+  paths: ["html", "css", "javascript"],
     overview:
       "You are going to build a calculator that really works: a clear display, a tidy grid of buttons, and JavaScript that keeps track of every number you press. It looks simple, but it quietly combines layout, events, variables, conditions and functions in one small project you can finish in a single sitting.",
     youWillLearn: [
@@ -157,7 +158,7 @@ export const guidedProjects: GuidedProject[] = [
       "Add keyboard support so typing digits and Enter works exactly like clicking",
       "Show the full calculation above the display so the history of the sum is visible",
       "Add a memory button that stores and recalls a value",
-      "Implement true operator precedence so 2 + 3 × 4 gives 14",
+      "Implement true operator precedence so 2 + 3 Ã— 4 gives 14",
     ],
   },
   {
@@ -169,6 +170,7 @@ export const guidedProjects: GuidedProject[] = [
     icon: "cloud",
     color: "blue",
     tech: ["HTML", "CSS", "JavaScript", "fetch", "Open-Meteo API"],
+  paths: ["html", "css", "javascript", "apis"],
     overview:
       "You will build a weather app: type a city, press search, and see the current conditions and a short forecast pulled live from a public weather API. This is the project where web development stops feeling local, because your page will reach out to another server, ask a question and use the answer it gets back.",
     youWillLearn: [
@@ -268,7 +270,7 @@ export const guidedProjects: GuidedProject[] = [
       },
     ],
     testingChecklist: [
-      "Turn off your network (dev tools → Offline) and confirm you see the friendly error, not a blank card",
+      "Turn off your network (dev tools â†’ Offline) and confirm you see the friendly error, not a blank card",
       "Search a city that does not exist and confirm you are told so instead of showing stale data",
       "Press search twice quickly and confirm only the latest result is displayed",
       "The loading state is visible for long enough to actually read it",
@@ -322,6 +324,7 @@ export const guidedProjects: GuidedProject[] = [
     icon: "shield",
     color: "emerald",
     tech: ["HTML", "CSS", "JavaScript", "localStorage"],
+  paths: ["html", "css", "javascript"],
     overview:
       "You will build a password vault that lives entirely in your browser: save a site, username and password, search your entries, generate a strong password and copy it with one click. There is no server, so you can focus on the parts that make a vault feel trustworthy: tidy data, careful validation and honest feedback.",
     youWillLearn: [
@@ -421,7 +424,7 @@ export const guidedProjects: GuidedProject[] = [
       },
     ],
     testingChecklist: [
-      "Only fake sample credentials were used — no real password was ever typed in",
+      "Only fake sample credentials were used â€” no real password was ever typed in",
       "Entries survive a page reload and a browser restart",
       "Editing an entry updates it instead of adding a duplicate",
       "Deleting asks for confirmation and the entry is really gone afterwards",
@@ -476,6 +479,7 @@ export const guidedProjects: GuidedProject[] = [
     icon: "message",
     color: "amber",
     tech: ["HTML", "CSS", "JavaScript"],
+  paths: ["html", "css", "javascript"],
     overview:
       "You will build a chat interface that feels like the real thing: message bubbles, timestamps, a composer, a typing indicator, and a conversation that is still there when you come back. Without a server you will talk to a scripted partner, which is enough to learn every skill the front half of a real chat app needs.",
     youWillLearn: [
@@ -628,6 +632,7 @@ export const guidedProjects: GuidedProject[] = [
     icon: "user",
     color: "rose",
     tech: ["HTML", "CSS"],
+  paths: ["html", "css"],
     overview:
       "You will build a one-page portfolio that introduces you, shows what you have made, and gives anyone a way to reach you. It is HTML and CSS only, so every decision on screen is one you fully understand. It is also the highest-leverage beginner project there is, because one link turns scattered class exercises into something a person can actually look at.",
     youWillLearn: [
@@ -727,13 +732,13 @@ export const guidedProjects: GuidedProject[] = [
     ],
     testingChecklist: [
       "Every project link opens and points at the right destination",
-      "Every link is a real link — no `#` placeholders left in the code",
+      "Every link is a real link â€” no `#` placeholders left in the code",
       "Tab through the whole page and confirm a visible focus ring on each element",
       "All images have meaningful alt text (or are decorative and marked as such)",
       "The layout has no horizontal scrollbar at 360px wide",
       "Text passes a contrast check in both light and dark themes",
       "The contact link actually opens a mail client or form",
-      "The heading order goes h1 → h2 → h3 with no skipped levels",
+      "The heading order goes h1 â†’ h2 â†’ h3 with no skipped levels",
       "Page title and meta description are specific to you, not boilerplate",
       "The site loads over HTTPS with no mixed-content warnings",
     ],

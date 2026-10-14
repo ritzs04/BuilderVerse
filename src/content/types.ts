@@ -142,6 +142,11 @@ export interface GuidedProject {
   icon: string;
   color: LearningPath["color"];
   tech: string[];
+  /**
+   * Learning-path slugs this project draws on. Used by Graduation Studio to
+   * decide whether a project counts toward a path's Project Creator level.
+   */
+  paths: string[];
   overview: string;
   youWillLearn: string[];
   requirements: string[];
