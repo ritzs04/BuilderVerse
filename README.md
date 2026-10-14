@@ -50,6 +50,7 @@ Without a key the assistant explains exactly how to enable it and every other fe
 | **Ideas Vault** | 20 product ideas with problem framing, MVP scope, difficulty and bookmarking |
 | **Builder AI** | Chat tutor with conversation history (env-configured, graceful fallback) |
 | **Gamification** | XP, 8 levels, 14 badges, daily missions, streaks, notifications, anti-farming rules |
+| **Graduation Studio** | 3 server-verified certificate levels, PNG/PDF export, QR verification, reissue + revocation |
 | **Profile & settings** | Public portfolio, headline/avatar, preferences, password change, account deletion |
 | **Search** | Content-wide search across lessons, projects, puzzles and ideas |
 
