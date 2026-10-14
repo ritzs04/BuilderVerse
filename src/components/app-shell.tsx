@@ -33,6 +33,7 @@ const primaryNav = [
   { href: "/ideas", label: "Ideas Vault", icon: "lightbulb" },
   { href: "/assistant", label: "Builder AI", icon: "sparkles" },
   { href: "/progress", label: "My Progress", icon: "list" },
+  { href: "/graduate", label: "Graduation Studio", icon: "trophy" },
   { href: "/profile", label: "Builder Passport", icon: "user" },
   { href: "/settings", label: "Settings", icon: "settings" },
 ];
@@ -66,11 +67,11 @@ export function AppShell({
       {/* ---------------------------------------------------------- sidebar */}
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 flex-col border-r border-line bg-bg-elevated lg:flex">
         <Link href="/dashboard" className="flex items-center gap-2 px-5 pt-5 pb-4">
-          <span className="grid size-8 place-items-center rounded-lg bg-gradient-to-br from-brand to-accent text-sm font-black text-white">
+          <span className="grid size-8 place-items-center rounded-xl bg-gradient-to-br from-brand to-rose text-sm font-black text-white shadow-md shadow-rose/20">
             B
           </span>
           <span className="text-[0.95rem] font-extrabold tracking-tight text-ink">
-            Builder<span className="text-brand">Verse</span>
+            Builder<span className="text-rose">Verse</span>
           </span>
         </Link>
 
@@ -83,9 +84,9 @@ export function AppShell({
                 href={item.href}
                 aria-current={active ? "page" : undefined}
                 className={clsx(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition",
+                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-semibold transition",
                   active
-                    ? "bg-brand-soft text-brand"
+                    ? "bg-brand-soft text-brand font-bold"
                     : "text-ink-soft hover:bg-surface-2 hover:text-ink",
                 )}
               >
@@ -139,11 +140,11 @@ export function AppShell({
         <header className="sticky top-0 z-30 border-b border-line bg-bg/85 backdrop-blur-md">
           <div className="flex h-14 items-center gap-3 px-4 sm:px-6">
             <Link href="/dashboard" className="flex items-center gap-2 lg:hidden">
-              <span className="grid size-7 place-items-center rounded-lg bg-gradient-to-br from-brand to-accent text-xs font-black text-white">
+              <span className="grid size-7 place-items-center rounded-lg bg-gradient-to-br from-brand to-rose text-xs font-black text-white shadow-md">
                 B
               </span>
               <span className="text-sm font-extrabold text-ink">
-                Builder<span className="text-brand">Verse</span>
+                Builder<span className="text-rose">Verse</span>
               </span>
             </Link>
 
@@ -202,7 +203,7 @@ export function AppShell({
                   aria-current={active ? "page" : undefined}
                   className={clsx(
                     "flex flex-col items-center gap-1 py-2.5 text-[0.68rem] font-semibold transition",
-                    active ? "text-brand" : "text-muted",
+                    active ? "text-brand font-bold" : "text-muted",
                   )}
                 >
                   <Icon name={item.icon} size={19} />
@@ -216,9 +217,10 @@ export function AppShell({
 
       {/* Floating streak pill for small screens */}
       {user.streak > 0 && (
-        <div className="fixed right-4 bottom-20 z-30 lg:hidden">
-          <Pill tone="warning" className="shadow-[var(--bv-shadow)]">
-            🔥 {user.streak} day{user.streak === 1 ? "" : "s"}
+        <div className="fixed right-4 bottom-20 z-30 lg:hidden popup-fade-in">
+          <Pill tone="warning" className="shadow-md">
+            <span className="text-warning mr-1">🔥</span>
+            {user.streak} day{user.streak === 1 ? "" : "s"}
           </Pill>
         </div>
       )}
