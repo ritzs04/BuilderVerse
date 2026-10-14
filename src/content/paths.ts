@@ -61,6 +61,36 @@ export const learningPaths: LearningPath[] = [
     color: "cyan",
     order: 6,
   },
+  {
+    slug: "python",
+    title: "Python",
+    tagline: "Think in plain English, run real programs",
+    description:
+      "Python reads almost like English, which makes it the kindest first programming language. Learn variables, conditions, loops and functions by building small programs.",
+    icon: "code",
+    color: "amber",
+    order: 7,
+  },
+  {
+    slug: "java",
+    title: "Java",
+    tagline: "Strong typing, real engineering habits",
+    description:
+      "Java powers apps and servers, and its strict rules teach discipline that larger teams rely on. Learn classes, methods and arrays.",
+    icon: "code",
+    color: "blue",
+    order: 8,
+  },
+  {
+    slug: "c",
+    title: "C",
+    tagline: "Close to the machine, clear about memory",
+    description:
+      "C has powered operating systems for decades. Learn it to understand what other languages quietly do for you.",
+    icon: "code",
+    color: "violet",
+    order: 9,
+  },
 ];
 
 export function getPath(slug: string): LearningPath | undefined {

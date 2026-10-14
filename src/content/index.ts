@@ -1,5 +1,8 @@
 import type { Lesson, LearningPath } from "./types";
 import { learningPaths, getPath } from "./paths";
+import { pythonLessons } from "./lessons/python";
+import { javaLessons } from "./lessons/java";
+import { cLessons } from "./lessons/c";
 import { htmlLessons } from "./lessons/html";
 import { cssLessons } from "./lessons/css";
 import { javascriptLessons } from "./lessons/javascript";
@@ -41,6 +44,9 @@ const lessonsByPathRecord: Record<string, Lesson[]> = {
   dom: domLessons,
   apis: apiLessons,
   git: gitLessons,
+  python: pythonLessons,
+  java: javaLessons,
+  c: cLessons,
 };
 
 export interface LessonWithMeta extends Lesson {
