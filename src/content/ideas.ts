@@ -1,0 +1,548 @@
+import type { ProjectIdea } from "./types";
+
+/**
+ * Brain bank of project ideas across every level and category.
+ * Each idea is specific enough to start building today.
+ */
+export const projectIdeas: ProjectIdea[] = [
+  {
+    slug: "student-study-planner",
+    title: "Student Study Planner",
+    difficulty: "Beginner",
+    categories: ["beginner", "productivity", "education"],
+    tech: ["HTML", "CSS", "JavaScript", "localStorage"],
+    problem:
+      "Students juggle assignment deadlines across sticky notes, group chats and memory, so due dates get missed. One planner that holds every class and deadline in a single view takes that stress away.",
+    features: [
+      "Add subjects and assignments with due dates",
+      "Sort by due date and tick items off as done",
+      "See a due-this-week summary at the top",
+      "Colour-code each subject so the week reads at a glance",
+      "Save everything locally so it survives a refresh",
+    ],
+    learningGoals: [
+      "HTML forms, validation and event handling",
+      "Arrays of objects and rendering lists",
+      "Persisting data with localStorage",
+      "Working with dates and sorting",
+    ],
+    extensions: [
+      "Add a calendar month view",
+      "Remind me with the Notification API",
+      "Export the week as a shareable image",
+    ],
+  },
+  {
+    slug: "quiz-platform-for-seniors",
+    title: "Quiz Platform for Seniors",
+    difficulty: "Beginner",
+    categories: ["beginner", "education", "social impact"],
+    tech: ["HTML", "CSS", "JavaScript"],
+    problem:
+      "Most quiz sites assume fast reading, small text and confident tapping, which locks out older learners. A calm quiz with large type and one question per screen lets seniors test their knowledge without fighting the interface.",
+    features: [
+      "One large question per screen with big tap targets",
+      "Adjustable text size and high-contrast colour mode",
+      "Instant friendly feedback with a short explanation",
+      "No timers or countdown pressure",
+      "Printable results page a class can take home",
+    ],
+    learningGoals: [
+      "Semantic HTML and full keyboard navigation",
+      "Accessible colour contrast and visible focus styles",
+      "Managing quiz state across several screens",
+      "Storing questions as arrays of objects",
+    ],
+    extensions: [
+      "Read questions aloud with the Speech API",
+      "A teacher page for adding new quizzes",
+      "Save scores across sessions",
+    ],
+  },
+  {
+    slug: "habit-streak-tracker",
+    title: "Habit Streak Tracker",
+    difficulty: "Beginner",
+    categories: ["beginner", "productivity", "health"],
+    tech: ["HTML", "CSS", "JavaScript", "localStorage"],
+    problem:
+      "People lose track of habits because the checklist lives in a notebook they never carry. A one-tap daily tracker with visible streaks makes consistency easy to see and hard to break.",
+    features: [
+      "Create up to five habits with a daily check-in",
+      "One tap marks today done, with an undo for mistakes",
+      "Streak counter plus a rolling 30-day grid",
+      "Weekly completion summary for every habit",
+      "Rename or delete a habit without losing history",
+    ],
+    learningGoals: [
+      "Managing an array of objects as app state",
+      "Date handling with day strings and comparisons",
+      "Building a calendar-style grid with CSS Grid",
+      "Persisting state and loading it on start",
+    ],
+    extensions: [
+      "Evening reminder with the Notification API",
+      "A rest day that keeps the streak alive",
+      "CSV export of your full history",
+    ],
+  },
+  {
+    slug: "markdown-notes-app",
+    title: "Markdown Notes App",
+    difficulty: "Beginner",
+    categories: ["beginner", "productivity", "frontend"],
+    tech: ["HTML", "CSS", "JavaScript", "marked.js", "localStorage"],
+    problem:
+      "Plain text notes are hard to skim and rich-text files are hard to share. Markdown gives notes real structure while staying readable in any editor, forever.",
+    features: [
+      "Split view with editor on the left and live preview on the right",
+      "Sidebar listing all notes with instant search",
+      "Toolbar for headings, bold, links and code",
+      "Auto-save as you type, plus copy-as-HTML",
+      "Light and dark themes",
+    ],
+    learningGoals: [
+      "Integrating a third-party rendering library",
+      "Updating the DOM efficiently on every keystroke",
+      "Split layouts with Flexbox or CSS Grid",
+      "Storing a collection of documents",
+    ],
+    extensions: [
+      "Import and export real .md files",
+      "Tag-based filtering",
+      "Two-pane editor resizable by dragging",
+    ],
+  },
+  {
+    slug: "campus-lost-and-found-board",
+    title: "Campus Lost & Found Board",
+    difficulty: "Beginner",
+    categories: ["beginner", "social impact", "frontend"],
+    tech: ["HTML", "CSS", "JavaScript", "localStorage"],
+    problem:
+      "Lost items on campus end up in a drawer somewhere while their owners never hear about them. A public board where students post found items gets belongings back to their owners much faster.",
+    features: [
+      "Post an item with location, date and contact detail",
+      "Browse listings by category such as keys, cards and bottles",
+      "Search listings by keyword",
+      "Mark an item as returned to clear it from the board",
+      "Flag duplicate or suspicious posts",
+    ],
+    learningGoals: [
+      "Building a create, read, update and delete flow",
+      "Filtering and searching arrays",
+      "Form validation and clear empty states",
+      "Persisting shared data locally",
+    ],
+    extensions: [
+      "Photo uploads for found items",
+      "Email notification when a match is posted",
+      "A small backend so everyone sees the same board",
+    ],
+  },
+  {
+    slug: "password-strength-auditor",
+    title: "Password Strength Auditor",
+    difficulty: "Beginner",
+    categories: ["beginner", "cybersecurity", "education"],
+    tech: ["HTML", "CSS", "JavaScript", "zxcvbn"],
+    problem:
+      "Weak passwords keep getting reused because their weakness is invisible until it is too late. A visual auditor that scores a password and explains exactly why helps people fix it themselves.",
+    features: [
+      "Live strength meter that updates as you type",
+      "Plain-language reasons behind a low score",
+      "Checks for length, character variety and known patterns",
+      "Suggests a stronger replacement you can copy",
+      "Everything runs in the browser, nothing is sent anywhere",
+    ],
+    learningGoals: [
+      "Real-time input handling and debouncing",
+      "String analysis and pattern matching",
+      "Visual feedback and animated states in CSS",
+      "Explaining risk clearly in interface copy",
+    ],
+    extensions: [
+      "Audit a whole saved-password list",
+      "Breach lookup with the Have I Been Pwned API",
+      "A browser bookmarklet version",
+    ],
+  },
+  {
+    slug: "typing-speed-test",
+    title: "Typing Speed Test",
+    difficulty: "Beginner",
+    categories: ["beginner", "games", "education"],
+    tech: ["HTML", "CSS", "JavaScript"],
+    problem:
+      "Slow typing quietly wastes hours of every coding session, and drills feel like homework. A short game-style test with instant WPM feedback makes practice something people actually repeat.",
+    features: [
+      "Random passage to type against, refreshed each round",
+      "Live words-per-minute and accuracy while typing",
+      "Timed rounds of 30, 60 or 90 seconds",
+      "Mistakes highlighted character by character against the target",
+      "Personal best saved on the device",
+    ],
+    learningGoals: [
+      "Comparing two strings character by character",
+      "Accurate timing with timestamps",
+      "Updating the UI on every keystroke",
+      "Ranking and storing scores",
+    ],
+    extensions: [
+      "Class leaderboard shared across devices",
+      "A code-snippet practice mode",
+      "Daily challenge passage",
+    ],
+  },
+  {
+    slug: "bill-splitter",
+    title: "Fair Share Bill Splitter",
+    difficulty: "Beginner",
+    categories: ["beginner", "finance", "productivity"],
+    tech: ["HTML", "CSS", "JavaScript"],
+    problem:
+      "Groups of friends end up arguing over who owes what after trips and dinners, and mental math always seems to shortchange someone. A splitter does the arithmetic and shows a clear settle-up plan.",
+    features: [
+      "Add the people in the group once and reuse them",
+      "Enter each item with whoever paid for it",
+      "Split equally, evenly, or by custom shares",
+      "Live who-owes-whom summary that updates as you type",
+      "Copy or share the final tally as text",
+    ],
+    learningGoals: [
+      "Parsing and validating numeric input",
+      "Totals and grouping with array methods",
+      "Floating point rounding for money",
+      "Formatting currency clearly in the UI",
+    ],
+    extensions: [
+      "Multiple currencies with exchange rates",
+      "Save a group and its bills for next time",
+      "Shareable link with the split details",
+    ],
+  },
+  {
+    slug: "expense-tracker-with-charts",
+    title: "Expense Tracker with Charts",
+    difficulty: "Intermediate",
+    categories: ["intermediate", "finance", "productivity"],
+    tech: ["HTML", "CSS", "JavaScript", "Chart.js", "localStorage"],
+    problem:
+      "Tracking spending in a spreadsheet rarely lasts past one month because entry feels like work and the patterns stay hidden. A tracker that charts every category as you log makes where the money went obvious.",
+    features: [
+      "Log income and expenses with categories and dates",
+      "Monthly totals with a category breakdown chart",
+      "Budget versus actual bar for each month",
+      "Filter history by date range and category",
+      "Export everything as a CSV file",
+    ],
+    learningGoals: [
+      "Aggregating data with reduce, map and filter",
+      "Feeding live data into a charting library",
+      "Grouping records by month and category",
+      "Persisting structured data reliably",
+    ],
+    extensions: [
+      "Recurring bills that add themselves monthly",
+      "Bank statement CSV import",
+      "Shared household view for two people",
+    ],
+  },
+  {
+    slug: "drag-drop-task-board",
+    title: "Drag & Drop Task Board",
+    difficulty: "Intermediate",
+    categories: ["intermediate", "productivity", "frontend"],
+    tech: ["React", "TypeScript", "CSS", "localStorage"],
+    problem:
+      "Flat to-do lists make work in progress and blocked tasks look identical to finished ones. A board with movable cards makes the stage of every task visible at a single glance.",
+    features: [
+      "Columns for planned, doing and done",
+      "Drag cards between columns with clear drop targets",
+      "Create, rename, prioritise and delete tasks",
+      "Due-date badges and overdue highlighting",
+      "Board state restored between reloads",
+    ],
+    learningGoals: [
+      "Drag events and drop-target handling",
+      "Immutable state updates in React",
+      "Typed models for tasks and columns",
+      "Accessible alternatives to dragging",
+    ],
+    extensions: [
+      "Keyboard shortcuts to move a selected card",
+      "Board sharing through a small backend",
+      "Weekly throughput chart of completed work",
+    ],
+  },
+  {
+    slug: "classroom-chat-room",
+    title: "Classroom Chat Room",
+    difficulty: "Intermediate",
+    categories: ["intermediate", "full stack", "education"],
+    tech: ["Node.js", "Express", "Socket.IO", "HTML", "CSS"],
+    problem:
+      "Classroom discussion dies when the quiet half of the room never speaks up, and office chat tools feel noisy for students. A simple room per class lets everyone ask and answer in real time.",
+    features: [
+      "Join a room with a short code and a display name",
+      "Messages broadcast to everyone instantly",
+      "System notices when someone joins or leaves",
+      "Message history kept for the session",
+      "Moderation tools: slow mode and removing a message",
+    ],
+    learningGoals: [
+      "Two-way communication with WebSockets",
+      "Broadcasting events from the server",
+      "Handling connect, disconnect and error events",
+      "Serving a client app from a Node server",
+    ],
+    extensions: [
+      "Private direct messages between students",
+      "Save the transcript as a Markdown file",
+      "Emoji reactions on messages",
+    ],
+  },
+  {
+    slug: "url-shortener",
+    title: "URL Shortener with Click Stats",
+    difficulty: "Intermediate",
+    categories: ["intermediate", "backend", "productivity"],
+    tech: ["Node.js", "Express", "SQLite", "HTML", "CSS"],
+    problem:
+      "Long links are unreadable in print and impossible to remember, while hosted shorteners hide where they actually point. A self-hosted shortener gives clean links plus click stats you fully control.",
+    features: [
+      "Turn any long URL into a short code",
+      "Redirect instantly when the short link is opened",
+      "Click counts broken down by day",
+      "Validation for bad URLs and duplicate codes",
+      "A dashboard listing every link you created",
+    ],
+    learningGoals: [
+      "Designing REST endpoints that stay predictable",
+      "Database inserts, lookups and unique constraints",
+      "Route parameters and redirect responses",
+      "Input validation and helpful 404 pages",
+    ],
+    extensions: [
+      "Custom aliases instead of random codes",
+      "QR code image for each short link",
+      "Expiring links for limited-time offers",
+    ],
+  },
+  {
+    slug: "ai-study-buddy",
+    title: "AI Study Buddy",
+    difficulty: "Intermediate",
+    categories: ["intermediate", "ai", "education"],
+    tech: ["JavaScript", "Node.js", "OpenAI API", "HTML", "CSS"],
+    problem:
+      "Turning a chapter into practice questions takes longer than studying the chapter itself, so students skip retrieval practice entirely. Paste your notes and get a ready-made quiz in seconds.",
+    features: [
+      "Paste notes or upload a text file",
+      "Choose question type and how many to generate",
+      "Generate questions together with an answer key",
+      "Rate each question as helpful or unhelpful",
+      "Save decks and retake them later",
+    ],
+    learningGoals: [
+      "Designing prompts that return structured JSON",
+      "Async API calls with loading and error states",
+      "Keeping API keys off the client",
+      "Validating a response before trusting it",
+    ],
+    extensions: [
+      "Auto-grade a learner's written answers",
+      "Export decks in Anki format",
+      "Spoken questions for hands-free study",
+    ],
+  },
+  {
+    slug: "volunteer-shift-signup",
+    title: "Volunteer Shift Sign-Up",
+    difficulty: "Intermediate",
+    categories: ["intermediate", "full stack", "social impact"],
+    tech: ["React", "Node.js", "Express", "SQLite"],
+    problem:
+      "Food banks and community events coordinate volunteer slots over group chats, which means double-bookings and shifts that quietly go unfilled. A public board fills every slot and shows who is coming.",
+    features: [
+      "List shifts with time, place and available spots",
+      "One-click sign-up and cancel with live slot counts",
+      "Organiser view with an exportable roster",
+      "Automatic closing of full shifts",
+      "Confirmation email after booking",
+    ],
+    learningGoals: [
+      "Relational data for events and sign-ups",
+      "REST endpoints with server-side validation",
+      "Preventing overbooking in the database",
+      "Protecting organiser-only routes",
+    ],
+    extensions: [
+      "Text or email reminders the day before",
+      "Recurring weekly shifts",
+      "Volunteer hour history page",
+    ],
+  },
+  {
+    slug: "workout-progress-logger",
+    title: "Workout Progress Logger",
+    difficulty: "Intermediate",
+    categories: ["intermediate", "health", "productivity"],
+    tech: ["React", "TypeScript", "Chart.js", "CSS"],
+    problem:
+      "Progress in the gym happens over months, but memories and paper notebooks cannot show whether last week actually beat the week before. A logger charts the trend and proves the work is paying off.",
+    features: [
+      "Log every set with reps and weight",
+      "History grouped by day and exercise",
+      "Volume and personal-record charts over time",
+      "Reuse a previous session as a template",
+      "Rest timer that starts when a set ends",
+    ],
+    learningGoals: [
+      "Typed domain models for workouts and sets",
+      "Aggregating sets into weekly volume",
+      "Charting time-series data",
+      "Optimistic UI updates against an API",
+    ],
+    extensions: [
+      "Body measurement and photo log",
+      "Plate calculator for barbell loading",
+      "Share progress with a coach account",
+    ],
+  },
+  {
+    slug: "classroom-quiz-leaderboard",
+    title: "Classroom Quiz with Live Leaderboard",
+    difficulty: "Intermediate",
+    categories: ["intermediate", "education", "games"],
+    tech: ["React", "Node.js", "Express", "Socket.IO"],
+    problem:
+      "Review sessions are more engaging when the whole class plays together, but paper quizzes give no instant feedback and hand-held scoreboards are awkward. A hosted quiz with a live scoreboard turns revision into a game.",
+    features: [
+      "Teacher starts a quiz, students join with a code",
+      "Leaderboard updates live as answers arrive",
+      "Instant feedback after each question",
+      "Optional timer with points for speed",
+      "End-of-round summary of the most-missed questions",
+    ],
+    learningGoals: [
+      "Keeping game state authoritative on the server",
+      "Broadcasting updates to many clients at once",
+      "Handling simultaneous answers fairly",
+      "Ranking entries and resolving ties",
+    ],
+    extensions: [
+      "Team mode with combined scores",
+      "Reusable question bank per class",
+      "Export results as a grading sheet",
+    ],
+  },
+  {
+    slug: "ai-code-review-assistant",
+    title: "AI Code Review Assistant",
+    difficulty: "Advanced",
+    categories: ["advanced", "ai", "backend"],
+    tech: ["TypeScript", "Node.js", "Express", "OpenAI API"],
+    problem:
+      "Code review is where juniors learn fastest, but reviewers are scarce and public AI tools may keep your code. A self-hosted assistant comments on diffs with explanations, style notes and bug catches.",
+    features: [
+      "Paste a diff or point it at a branch",
+      "Line-level comments tagged by severity",
+      "Checks for bugs, style issues and missing tests",
+      "A project file for team-specific rules",
+      "Saved review history per branch",
+    ],
+    learningGoals: [
+      "Streaming model responses into an interface",
+      "Enforcing structured JSON output with schemas",
+      "Building a multi-stage analysis pipeline",
+      "Rate limiting and controlling API cost",
+    ],
+    extensions: [
+      "GitHub Action that reviews every pull request",
+      "Suggested fixes with a preview diff",
+      "Shared rule sets across a whole team",
+    ],
+  },
+  {
+    slug: "zero-knowledge-encrypted-notes",
+    title: "Zero-Knowledge Encrypted Notes",
+    difficulty: "Advanced",
+    categories: ["advanced", "cybersecurity", "full stack"],
+    tech: ["TypeScript", "React", "Node.js", "PostgreSQL", "Web Crypto API"],
+    problem:
+      "Note apps that sync your data can also read it, which is unacceptable for journals, health logs and credentials. A zero-knowledge app encrypts everything on your device so the server only ever stores noise.",
+    features: [
+      "Encryption key derived from your passphrase on device",
+      "Notes encrypted before they ever leave the browser",
+      "Multi-device sync of ciphertext only",
+      "Auto-lock after inactivity or on tab close",
+      "Version history kept client-side",
+    ],
+    learningGoals: [
+      "AES-GCM and PBKDF2 with the Web Crypto API",
+      "Salts, nonces and authenticated encryption",
+      "Threat modelling a sync protocol",
+      "Handling keys in memory without leaking them",
+    ],
+    extensions: [
+      "Emergency read-only share links",
+      "Encrypted backup import and export",
+      "Device session audit log",
+    ],
+  },
+  {
+    slug: "collaborative-doc-editor",
+    title: "Real-Time Collaborative Doc Editor",
+    difficulty: "Advanced",
+    categories: ["advanced", "full stack", "productivity"],
+    tech: ["TypeScript", "React", "Node.js", "Socket.IO", "PostgreSQL"],
+    problem:
+      "Teams still email documents back and forth and lose track of which copy is current. A shared editor where everyone types into one document at once removes the versioning mess entirely.",
+    features: [
+      "Concurrent editing with live carets and selections",
+      "Presence list showing who is in the document",
+      "Conflict resolution so no typing gets lost",
+      "Comments anchored to a paragraph",
+      "Export to Markdown and PDF",
+    ],
+    learningGoals: [
+      "Conflict resolution with operational transforms or CRDT basics",
+      "Broadcasting compact deltas instead of full documents",
+      "Presence and cursor synchronisation",
+      "Persisting and replaying document history",
+    ],
+    extensions: [
+      "Offline edits queued for later sync",
+      "Suggested-changes review mode",
+      "Folders and per-document permissions",
+    ],
+  },
+  {
+    slug: "storefront-with-payments",
+    title: "Storefront with Real Payments",
+    difficulty: "Advanced",
+    categories: ["advanced", "full stack", "finance"],
+    tech: ["Next.js", "TypeScript", "Stripe", "PostgreSQL"],
+    problem:
+      "Most student shops stop at the cart because payments, webhooks and order state are where tutorials end, yet that is exactly what real businesses need. A storefront with test-mode checkout proves you can ship the whole flow.",
+    features: [
+      "Product admin with images, stock and pricing",
+      "Cart that validates stock before checkout",
+      "Stripe checkout in test mode with order confirmation",
+      "Webhook-confirmed order status",
+      "Admin dashboard listing every order",
+    ],
+    learningGoals: [
+      "Payment intents and verifying webhooks",
+      "Transactional integrity for orders and stock",
+      "Authentication and role-based access control",
+      "Idempotency and retry handling",
+    ],
+    extensions: [
+      "Discount codes and seasonal sales",
+      "Refund and cancellation workflow",
+      "Low-stock alerts by email",
+    ],
+  },
+];

@@ -1,0 +1,19 @@
+services:
+  web:
+    build: .
+    image: builderverse:latest
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_PATH: /app/data/builderverse.db
+      APP_URL: http://localhost:3000
+      # Builder AI is optional — the app degrades gracefully without it.
+      # AI_API_KEY: ${AI_API_KEY:-}
+      # AI_BASE_URL: ${AI_BASE_URL:-}
+      # AI_MODEL: ${AI_MODEL:-}
+    volumes:
+      - bv-data:/app/data
+    restart: unless-stopped
+
+volumes:
+  bv-data:
