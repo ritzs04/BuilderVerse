@@ -1,0 +1,1 @@
+Delete-Item -Path 'D:\RESUME PROJECT\New builderverse\install_supabase.ps1' -Force

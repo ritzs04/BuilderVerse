@@ -3,7 +3,7 @@
   "framework": "vite",
   "buildCommand": "vite build",
   "outputDirectory": "dist",
-  "installCommand": "bun install",
+  "installCommand": "npm install",
   "functions": {
     "api/ai/mentor.ts": {
       "memory": 512,
@@ -25,3 +25,4 @@
     }
   ]
 }
+

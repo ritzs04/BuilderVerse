@@ -31,7 +31,12 @@ export const CertificateVerifyView: React.FC<{ certId: string; onBack: () => voi
               every lesson, exercise and project behind it was checked against actual progress.
             </p>
             <div className="p-4 rounded-xl bg-[var(--bv-surface-2)] border border-[var(--bv-line)] text-left space-y-1.5 text-xs">
-              <div><b>Presented to:</b> {rendered.record.displayName}</div>
+              <div>
+                <b>Presented to:</b>{' '}
+                {rendered.record.publiclyShared
+                  ? rendered.record.displayName
+                  : <span className="text-[var(--bv-muted)] italic">hidden by the student's sharing setting</span>}
+              </div>
               <div><b>Course / achievement:</b> {rendered.record.courseName}</div>
               <div><b>Level:</b> {rendered.record.level}</div>
               <div><b>Issued:</b> {rendered.record.issuedAt}</div>

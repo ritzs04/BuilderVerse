@@ -34,6 +34,7 @@ import { BuildOwnProjectModal, OwnProject } from './components/BuildOwnProjectMo
 import { MyBuilderPortfolioModal, PortfolioEntry } from './components/MyBuilderPortfolioModal';
 import { GraduationStudioModal } from './components/GraduationStudioModal';
 import { CertificateVerifyView } from './components/CertificateVerifyView';
+import { CertificateRecord, verificationUrl } from './utils/certificates';
 import { IdeaGeneratorModal, GeneratedIdea } from './components/IdeaGeneratorModal';
 import { ShowcaseModal } from './components/ShowcaseModal';
 import { WeeklyChallengesModal } from './components/WeeklyChallengesModal';
@@ -408,6 +409,43 @@ export default function App() {
   getBuilderLevelRef.current = getBuilderLevel;
   const onEarnXpRef = React.useRef(handleEarnXp);
   onEarnXpRef.current = handleEarnXp;
+
+  /** Save an issued certificate into My Builder Portfolio as a published entry. */
+  const handleSaveCertificateToPortfolio = (record: CertificateRecord) => {
+    let entries: PortfolioEntry[] = [];
+    try {
+      const saved = localStorage.getItem('bv_portfolio_entries');
+      entries = saved ? JSON.parse(saved) : [];
+    } catch { /* start fresh */ }
+    if (entries.some(e => e.title === `Certificate: ${record.courseName}`)) return;
+    const entry: PortfolioEntry = {
+      id: 'pf-cert-' + Date.now(),
+      title: `Certificate: ${record.courseName}`,
+      description: `Earned the "${record.level}" certificate for ${record.courseName} — every required lesson, exercise and assessment was completed before it was issued.`,
+      problemSolved: record.revoked ? '' : `Certificate ID ${record.id}`,
+      technologies: '',
+      challenges: '',
+      conceptsLearned: record.courseName,
+      githubUrl: '',
+      liveUrl: record.publiclyShared ? verificationUrl(record.id) : '',
+      published: false,
+      createdAt: Date.now()
+    };
+    localStorage.setItem('bv_portfolio_entries', JSON.stringify([entry, ...entries]));
+    setPortfolioEntries([entry, ...entries]);
+  };
+
+  /** Celebration action: jump to the next un-started learning path. */
+  const handleContinueLearning = () => {
+    const next = LEARNING_PATHS.find(
+      p => p.lessons.length > 0 && p.lessons.every(l => !completedLessonIds.includes(l.id))
+    );
+    if (next) {
+      setActivePath(next);
+    } else {
+      document.getElementById('learn')?.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   /** Submit a finished challenge build into Build My Own Project + award XP. */
   const handleSubmitChallengeBuild = (title: string, reflection: string, xpReward: number) => {
@@ -1758,6 +1796,8 @@ export default function App() {
         completedProjectIds={completedProjectIds}
         ownProjects={ownProjects}
         onEarnXp={handleEarnXp}
+        onSaveToPortfolio={handleSaveCertificateToPortfolio}
+        onContinueLearning={handleContinueLearning}
       />
 
       {/* 💡 PROJECT IDEA GENERATOR */}

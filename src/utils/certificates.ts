@@ -20,10 +20,16 @@ export interface CertificateRecord {
   courseId: string;
   courseName: string;
   level: CertificateLevel;
-  issuedAt: string; // ISO date
+  issuedAt: string; // ISO date the certificate was issued
   template: 'pink-dream' | 'coding-star' | 'future-builder';
   photoDataUrl: string | null;
   revoked: boolean;
+  /** Whether the student wants this certificate publicly shareable (name visible on the verify page). */
+  publiclyShared: boolean;
+  /** If this is a reissue, the ID of the certificate it replaces (history preserved). */
+  reissueOf?: string;
+  /** Set on the OLD record when it has been replaced by a reissue (kept for history). */
+  replacedBy?: string;
 }
 
 const STORAGE_KEY = 'bv_certificates';
@@ -98,6 +104,8 @@ export function verifyCertificate(id: string): {
   const found = loadCertificates().find(c => c.id === id) || null;
   if (!found) return { status: 'unknown', record: null };
   if (found.revoked) return { status: 'revoked', record: found };
+  // A certificate replaced by a reissue must not be presented as current.
+  if (found.replacedBy) return { status: 'revoked', record: found };
   if (!isCertificateIdWellFormed(id, found.courseId)) return { status: 'unknown', record: null };
   return { status: 'valid', record: found };
 }
@@ -126,6 +134,96 @@ export function verificationUrl(id: string): string {
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   return `${origin}/?verify=${encodeURIComponent(id)}`;
 }
+
+/** True when a live (non-revoked) certificate already exists for a course + level. */
+export function hasActiveCertificate(courseId: string, level: CertificateLevel): boolean {
+  return loadCertificates().some(c => c.courseId === courseId && c.level === level && !c.revoked);
+}
+
+/**
+ * Reissue a certificate: creates a NEW id but never silently changes history.
+ * The old record stays in the registry marked as replaced, so issue history survives.
+ */
+export function reissueCertificate(oldId: string): CertificateRecord | null {
+  const all = loadCertificates();
+  const old = all.find(c => c.id === oldId);
+  if (!old) return null;
+  const replacement: CertificateRecord = {
+    ...old,
+    id: generateCertificateId(old.courseId),
+    issuedAt: new Date().toISOString().slice(0, 10),
+    revoked: false,
+    reissueOf: old.id
+  };
+  // Keep the original record for history, marked so it can't be presented as current.
+  saveCertificates([...all.map(c => (c.id === old.id ? { ...c, replacedBy: replacement.id } : c)), replacement]);
+  return replacement;
+}
+
+const ACCEPTED_PHOTO_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+const MAX_PHOTO_BYTES = 8 * 1024 * 1024;   // 8 MB
+const MIN_DIMENSION = 150;                  // too small = blurry on the certificate
+const MAX_DIMENSION = 8000;                 // absurdly large images are rejected early
+
+/** Validate an upload before any processing. Returns an error message, or null when OK. */
+export function validatePhotoFile(file: File): string | null {
+  if (!ACCEPTED_PHOTO_TYPES.includes(file.type)) {
+    return 'Please choose a JPG, PNG or WebP image.';
+  }
+  if (file.size > MAX_PHOTO_BYTES) {
+    return 'That photo is larger than 8 MB — please pick a smaller one.';
+  }
+  return null;
+}
+
+/** Read the pixel dimensions of an image file (for validation + the crop UI). */
+export function readImageSize(dataUrl: string): Promise<{ width: number; height: number }> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    img.onerror = () => reject(new Error('Could not read the image file'));
+    img.src = dataUrl;
+  });
+}
+
+/**
+ * Bake crop + reposition into the stored photo so the preview and the
+ * exported PNG/PDF are pixel-identical. Renders a square circular-crop
+ * canvas at `size` pixels with `zoom` (1 = fit) and offsets in -1..1.
+ */
+export function cropPhoto(
+  sourceDataUrl: string,
+  zoom: number,
+  offsetX: number,
+  offsetY: number,
+  size = 512
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return reject(new Error('Canvas not supported'));
+
+      // Square source window scaled by zoom, then centred with the offsets.
+      const base = Math.min(img.naturalWidth, img.naturalHeight);
+      const side = base / zoom;
+      const maxX = (img.naturalWidth - side) / 2;
+      const maxY = (img.naturalHeight - side) / 2;
+      const sx = img.naturalWidth / 2 - side / 2 + offsetX * maxX;
+      const sy = img.naturalHeight / 2 - side / 2 + offsetY * maxY;
+
+      ctx.imageSmoothingQuality = 'high';
+      ctx.drawImage(img, sx, sy, side, side, 0, 0, size, size);
+      resolve(canvas.toDataURL('image/jpeg', 0.88));
+    };
+    img.onerror = () => reject(new Error('Could not read the image file'));
+    img.src = sourceDataUrl;
+  });
+}
+
 
 /** Generate a copy-paste LinkedIn announcement from a real achievement. */
 export function linkedInAnnouncement(record: CertificateRecord): string {

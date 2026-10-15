@@ -6,8 +6,9 @@ import html2canvas from 'html2canvas';
 import { LEARNING_PATHS } from '../data/builderVerseData';
 import { OwnProject } from './BuildOwnProjectModal';
 import {
-  CertificateLevel, CertificateRecord, compressPhoto, generateCertificateId,
-  linkedInAnnouncement, loadCertificates, saveCertificates, verificationUrl
+  CertificateLevel, CertificateRecord, generateCertificateId, hasActiveCertificate,
+  linkedInAnnouncement, loadCertificates, reissueCertificate, saveCertificates,
+  validatePhotoFile, readImageSize, cropPhoto, verificationUrl
 } from '../utils/certificates';
 import { triggerPathCompleteConfetti } from '../utils/confetti';
 
@@ -47,23 +48,48 @@ interface Props {
   completedProjectIds: string[];
   ownProjects: OwnProject[];
   onEarnXp: (amount: number) => void;
+  /** Save the issued certificate as a portfolio entry (celebration action). */
+  onSaveToPortfolio: (record: CertificateRecord) => void;
+  /** Jump the student to the next learning path (celebration action). */
+  onContinueLearning: () => void;
 }
 
 export const GraduationStudioModal: React.FC<Props> = ({
-  isOpen, onClose, username, completedLessonIds, completedProjectIds, ownProjects, onEarnXp
+  isOpen, onClose, username, completedLessonIds, completedProjectIds, ownProjects, onEarnXp,
+  onSaveToPortfolio, onContinueLearning
 }) => {
   const [stage, setStage] = useState<StudioStage>('welcome');
   const [displayName, setDisplayName] = useState(username);
+  const [nameConfirmed, setNameConfirmed] = useState(false);
+  const [rawPhoto, setRawPhoto] = useState<string | null>(null);
   const [photo, setPhoto] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState('');
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [cropOpen, setCropOpen] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const [offsetX, setOffsetX] = useState(0);
+  const [offsetY, setOffsetY] = useState(0);
+  const [publiclyShared, setPubliclyShared] = useState(true);
   const [template, setTemplate] = useState<CertificateRecord['template']>('pink-dream');
   const [chosen, setChosen] = useState<Eligibility | null>(null);
   const [issued, setIssued] = useState<CertificateRecord | null>(null);
   const [exporting, setExporting] = useState<'png' | 'pdf' | null>(null);
   const [exportError, setExportError] = useState('');
   const [copied, setCopied] = useState<'verify' | 'linkedin' | null>(null);
+  const [savedToPortfolio, setSavedToPortfolio] = useState(false);
   const [certs, setCerts] = useState<CertificateRecord[]>([]);
   const certPreviewRef = useRef<HTMLDivElement>(null);
+
+  // Respect the student's reduced-motion preference — no auto confetti.
+  const prefersReducedMotion = useMemo(() => {
+    try {
+      return typeof window !== 'undefined' &&
+        typeof window.matchMedia === 'function' &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch {
+      return false;
+    }
+  }, []);
 
   // Eligibility is computed from REAL progress — never from page views.
   const eligibility: Eligibility[] = useMemo(() => {
@@ -71,33 +97,28 @@ export const GraduationStudioModal: React.FC<Props> = ({
     for (const path of LEARNING_PATHS) {
       const total = path.lessons.length;
       const done = path.lessons.filter(l => completedLessonIds.includes(l.id)).length;
-      if (total > 0 && done === total) {
-        const alreadyIssued = loadCertificates().some(
-          c => c.courseId === path.id && c.level === 'Course Graduate' && !c.revoked
-        );
-        if (!alreadyIssued) {
-          list.push({
-            pathId: path.id,
-            pathName: path.title,
-            level: 'Course Graduate',
-            detail: `${done}/${total} lessons, exercises and quizzes completed`
-          });
-        }
+      if (total > 0 && done === total && !hasActiveCertificate(path.id, 'Course Graduate')) {
+        list.push({
+          pathId: path.id,
+          pathName: path.title,
+          level: 'Course Graduate',
+          detail: `${done}/${total} lessons, exercises and quizzes completed`
+        });
       }
     }
-    if (completedProjectIds.length > 0) {
+    if (completedProjectIds.length > 0 && !hasActiveCertificate('project-creator', 'Project Creator')) {
       const count = completedProjectIds.length;
       list.push({
-        pathId: `project-creator-${count}`,
+        pathId: 'project-creator',
         pathName: `${count} Guided Project${count > 1 ? 's' : ''}`,
         level: 'Project Creator',
         detail: 'Built, tested and documented a practical project'
       });
     }
     const doneOwn = ownProjects.filter(p => p.status === 'done');
-    if (doneOwn.length > 0) {
+    if (doneOwn.length > 0 && !hasActiveCertificate('independent-builder', 'Independent Builder')) {
       list.push({
-        pathId: `independent-builder-${doneOwn.length}`,
+        pathId: 'independent-builder',
         pathName: doneOwn[0].title || 'My Original Project',
         level: 'Independent Builder',
         detail: 'Created, tested and documented an original project'
@@ -105,6 +126,20 @@ export const GraduationStudioModal: React.FC<Props> = ({
     }
     return list;
   }, [completedLessonIds, completedProjectIds, ownProjects]);
+
+  /** Every learning path with its live completion state (eligible + in-progress). */
+  const pathProgress = useMemo(() => LEARNING_PATHS.map(path => {
+    const total = path.lessons.length;
+    const done = path.lessons.filter(l => completedLessonIds.includes(l.id)).length;
+    return {
+      path,
+      total,
+      done,
+      percent: total > 0 ? Math.round((done / total) * 100) : 0,
+      complete: total > 0 && done === total,
+      missing: path.lessons.filter(l => !completedLessonIds.includes(l.id)).map(l => l.title)
+    };
+  }), [completedLessonIds]);
 
   // Open the studio fresh and load the graduate's certificates.
   React.useEffect(() => {
@@ -120,34 +155,79 @@ export const GraduationStudioModal: React.FC<Props> = ({
     }
   }, [isOpen, username]);
 
-  /** Read a photo file, validate it, compress it, and store a data URL. */
-  const handlePhotoFile = (file: File | undefined) => {
+  /** Validate + read an upload, then open the crop controls. */
+  const handlePhotoFile = async (file: File | undefined) => {
     setPhotoError('');
     if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      setPhotoError('Please choose an image file (JPG or PNG).');
+    const typeError = validatePhotoFile(file);
+    if (typeError) {
+      setPhotoError(typeError);
       return;
     }
-    if (file.size > 8 * 1024 * 1024) {
-      setPhotoError('That photo is larger than 8 MB — please pick a smaller one.');
-      return;
-    }
+    setPhotoBusy(true);
     const reader = new FileReader();
     reader.onload = async () => {
       try {
-        const compressed = await compressPhoto(String(reader.result));
-        setPhoto(compressed);
+        const dataUrl = String(reader.result);
+        const { width, height } = await readImageSize(dataUrl);
+        if (Math.max(width, height) < 150) {
+          setPhotoError('That image is too small to look good on a certificate — please use one at least 150 × 150 px.');
+          setPhotoBusy(false);
+          return;
+        }
+        if (Math.max(width, height) > 8000) {
+          setPhotoError('That image is extremely large. Please pick something smaller.');
+          setPhotoBusy(false);
+          return;
+        }
+        setRawPhoto(dataUrl);
+        setZoom(1);
+        setOffsetX(0);
+        setOffsetY(0);
+        setPhoto(await cropPhoto(dataUrl, 1, 0, 0));
+        setCropOpen(true);
       } catch {
         setPhotoError('Could not read that photo. Please try a different file.');
       }
+      setPhotoBusy(false);
     };
-    reader.onerror = () => setPhotoError('Could not read that photo. Please try a different file.');
+    reader.onerror = () => {
+      setPhotoError('Could not read that photo. Please try a different file.');
+      setPhotoBusy(false);
+    };
     reader.readAsDataURL(file);
+  };
+
+  /** Re-bake the photo whenever a crop slider changes (keeps export == preview). */
+  const updateCrop = async (nextZoom: number, nextX: number, nextY: number) => {
+    setZoom(nextZoom);
+    setOffsetX(nextX);
+    setOffsetY(nextY);
+    if (!rawPhoto) return;
+    setPhotoBusy(true);
+    try {
+      setPhoto(await cropPhoto(rawPhoto, nextZoom, nextX, nextY));
+    } catch {
+      setPhotoError('Could not reposition the photo. Please re-upload it.');
+    }
+    setPhotoBusy(false);
+  };
+
+  const removePhoto = () => {
+    setRawPhoto(null);
+    setPhoto(null);
+    setCropOpen(false);
+    setPhotoError('');
   };
 
   /** Issue the verified certificate and save it to the local registry. */
   const handleIssue = () => {
-    if (!chosen || !displayName.trim()) return;
+    // Server-side guard equivalent: re-check eligibility right before issuing.
+    if (!chosen || !displayName.trim() || !nameConfirmed) return;
+    if (hasActiveCertificate(chosen.pathId, chosen.level)) {
+      setStage('my-certs');
+      return;
+    }
     const id = generateCertificateId(chosen.pathId);
     const record: CertificateRecord = {
       id,
@@ -158,7 +238,8 @@ export const GraduationStudioModal: React.FC<Props> = ({
       issuedAt: new Date().toISOString().slice(0, 10),
       template,
       photoDataUrl: photo,
-      revoked: false
+      revoked: false,
+      publiclyShared
     };
     const next = [...loadCertificates(), record];
     saveCertificates(next);
@@ -166,7 +247,7 @@ export const GraduationStudioModal: React.FC<Props> = ({
     setIssued(record);
     setStage('issued');
     onEarnXp(100); // graduation is the biggest reward on the platform
-    triggerPathCompleteConfetti();
+    if (!prefersReducedMotion) triggerPathCompleteConfetti();
   };
 
   /** Render the live certificate DOM to a high-resolution PNG. */
@@ -270,19 +351,24 @@ export const GraduationStudioModal: React.FC<Props> = ({
           </div>
         )}
 
-        <p className="mt-1 text-[10px] sm:text-xs text-[var(--bv-muted)]">This certificate is proudly presented to</p>
+        <p className="mt-1 text-[10px] sm:text-xs text-[var(--bv-muted)]">This certificate is presented to</p>
         <div className="text-lg sm:text-3xl font-black text-[var(--bv-brand)] leading-tight px-4">
           {record.displayName}
         </div>
         <p className="mt-1 text-[10px] sm:text-sm text-[var(--bv-ink-soft)] max-w-xl leading-snug">
-          for successfully completing <b>{record.courseName}</b> — {record.level}.<br />
-          Every concept learned, every bug solved, and every challenge attempted has strengthened your skills.
+          in recognition of successfully completing<br />
+          <b>{record.courseName}</b> — {record.level}
+        </p>
+        <p className="mt-1.5 text-[10px] sm:text-xs text-[var(--bv-muted)] max-w-xl leading-snug">
+          Your dedication to learning, practising, solving problems and building your
+          skills marks another step in your journey as an Independent Builder.
         </p>
 
         <div className="mt-2 flex items-end justify-between w-full px-1 sm:px-4">
           <div className="text-left text-[9px] sm:text-[11px] text-[var(--bv-muted)] leading-relaxed">
             <div>Issued: {record.issuedAt}</div>
             <div className="font-mono font-bold text-[var(--bv-ink-soft)]">{record.id}</div>
+            <div className="text-[8px] sm:text-[10px]">Issued by BuilderVerse · Learn. Think. Build.</div>
           </div>
           {qrDataUrl && (
             <img src={qrDataUrl} alt="Verification QR code" className="size-12 sm:size-20 bg-white p-1 rounded" />
@@ -353,16 +439,32 @@ export const GraduationStudioModal: React.FC<Props> = ({
               </div>
 
               {eligibility.length === 0 ? (
-                <div className="p-6 rounded-xl border border-dashed border-[var(--bv-line-strong)] text-center space-y-2">
-                  <p className="text-sm font-bold">No certificates unlocked yet 🌱</p>
-                  <p className="text-xs text-[var(--bv-muted)] max-w-md mx-auto leading-relaxed">
-                    Finish all lessons in any learning path, complete a guided project, or mark
-                    one of your own projects as done — then come back. Your progress is saved, so
-                    you can continue exactly where you left off.
-                  </p>
+                <div className="space-y-3">
+                  <div className="p-6 rounded-xl border border-dashed border-[var(--bv-line-strong)] text-center space-y-2">
+                    <p className="text-sm font-bold">No certificates unlocked yet 🌱</p>
+                    <p className="text-xs text-[var(--bv-muted)] max-w-md mx-auto leading-relaxed">
+                      Certificates unlock only from work you actually complete. Here's exactly what's
+                      still needed for each path — your progress is saved, so you can continue
+                      where you left off.
+                    </p>
+                  </div>
+                  {pathProgress.filter(p => !p.complete).map(({ path, done, total, percent, missing }) => (
+                    <div key={path.id} className="p-3.5 rounded-xl border border-[var(--bv-line)]">
+                      <div className="flex items-center justify-between text-xs font-bold">
+                        <span>{path.title}</span>
+                        <span className="text-[var(--bv-muted)]">{done}/{total} lessons · {percent}%</span>
+                      </div>
+                      <div className="h-1.5 rounded-full bg-[var(--bv-surface-2)] overflow-hidden mt-2">
+                        <div className="h-full rounded-full bg-[var(--bv-brand)]" style={{ width: `${percent}%` }} />
+                      </div>
+                      <p className="text-[11px] text-[var(--bv-muted)] mt-1.5 leading-relaxed">
+                        Still needed: {missing.join(' · ')}
+                      </p>
+                    </div>
+                  ))}
                   <button
                     onClick={() => setStage('my-certs')}
-                    className="text-xs font-bold text-[var(--bv-brand)] hover:underline"
+                    className="w-full text-xs font-bold text-[var(--bv-brand)] hover:underline"
                   >
                     View My Certificates anyway →
                   </button>
@@ -419,7 +521,10 @@ export const GraduationStudioModal: React.FC<Props> = ({
                 </label>
                 <input
                   value={displayName}
-                  onChange={e => setDisplayName(e.target.value)}
+                  onChange={e => {
+                    setDisplayName(e.target.value);
+                    setNameConfirmed(false);
+                  }}
                   maxLength={60}
                   placeholder="e.g. Maya Sharma"
                   className="w-full px-3.5 py-2.5 rounded-xl bg-[var(--bv-surface-2)] border border-[var(--bv-line)] text-sm font-bold focus:outline-none focus:border-[var(--bv-brand)]"
@@ -427,6 +532,17 @@ export const GraduationStudioModal: React.FC<Props> = ({
                 <p className="text-[11px] text-[var(--bv-muted)] mt-1">
                   Double-check the spelling — this exact name appears on the certificate. We never ask for ID documents.
                 </p>
+                <label className="flex items-start gap-2 mt-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={nameConfirmed}
+                    onChange={e => setNameConfirmed(e.target.checked)}
+                    className="mt-0.5 accent-[var(--bv-brand)]"
+                  />
+                  <span className="text-[11px] text-[var(--bv-ink-soft)] leading-relaxed">
+                    I confirm this name is spelled exactly as I want it printed.
+                  </span>
+                </label>
               </div>
 
               <div>
@@ -446,27 +562,93 @@ export const GraduationStudioModal: React.FC<Props> = ({
                       <Camera className="size-4" /> {photo ? 'Replace photo' : 'Upload photo'}
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/jpeg,image/png,image/webp"
                         className="hidden"
                         onChange={e => handlePhotoFile(e.target.files?.[0])}
                       />
                     </label>
+                    {photoBusy && <p className="text-[11px] text-[var(--bv-brand)] font-semibold">Preparing your photo…</p>}
                     {photo && (
-                      <button onClick={() => setPhoto(null)} className="block text-[11px] text-[var(--bv-muted)] hover:text-[var(--bv-danger)] transition">
-                        Remove — use text-only certificate
-                      </button>
+                      <div className="flex gap-3 flex-wrap">
+                        <button onClick={() => setCropOpen(o => !o)} className="text-[11px] text-[var(--bv-brand)] font-bold hover:underline">
+                          {cropOpen ? 'Done adjusting' : 'Crop & reposition'}
+                        </button>
+                        <button onClick={removePhoto} className="text-[11px] text-[var(--bv-muted)] hover:text-[var(--bv-danger)] transition">
+                          Remove — use text-only certificate
+                        </button>
+                      </div>
                     )}
                   </div>
                 </div>
+
+                {/* Crop & reposition controls — applied instantly to the stored photo */}
+                {cropOpen && rawPhoto && (
+                  <div className="mt-3 p-3.5 rounded-xl bg-[var(--bv-surface-2)] border border-[var(--bv-line)] space-y-3">
+                    <div className="flex items-center gap-4">
+                      <img src={rawPhoto} alt="Original upload" className="size-16 rounded-lg object-cover border border-[var(--bv-line)] opacity-60" />
+                      <img src={photo || ''} alt="Cropped result" className="size-16 rounded-full object-cover border-2 border-[var(--bv-brand)]" />
+                      <span className="text-[11px] text-[var(--bv-muted)] leading-relaxed">
+                        Original → circular crop preview.<br />Adjust until your face sits nicely in the frame.
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[11px] font-bold w-32 shrink-0">Zoom</span>
+                      <input
+                        type="range" min={1} max={3} step={0.1} value={zoom}
+                        onChange={e => updateCrop(parseFloat(e.target.value), offsetX, offsetY)}
+                        className="flex-1 accent-[var(--bv-brand)]" aria-label="Zoom"
+                      />
+                      <button onClick={() => updateCrop(1, offsetX, offsetY)} className="text-[10px] text-[var(--bv-muted)] hover:text-[var(--bv-brand)]">Reset</button>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[11px] font-bold w-32 shrink-0">Left / right</span>
+                      <input
+                        type="range" min={-1} max={1} step={0.05} value={offsetX}
+                        onChange={e => updateCrop(zoom, parseFloat(e.target.value), offsetY)}
+                        className="flex-1 accent-[var(--bv-brand)]" aria-label="Move left or right"
+                      />
+                      <button onClick={() => updateCrop(zoom, 0, offsetY)} className="text-[10px] text-[var(--bv-muted)] hover:text-[var(--bv-brand)]">Reset</button>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[11px] font-bold w-32 shrink-0">Up / down</span>
+                      <input
+                        type="range" min={-1} max={1} step={0.05} value={offsetY}
+                        onChange={e => updateCrop(zoom, offsetX, parseFloat(e.target.value))}
+                        className="flex-1 accent-[var(--bv-brand)]" aria-label="Move up or down"
+                      />
+                      <button onClick={() => updateCrop(zoom, offsetX, 0)} className="text-[10px] text-[var(--bv-muted)] hover:text-[var(--bv-brand)]">Reset</button>
+                    </div>
+                    <p className="text-[11px] text-[var(--bv-ink-soft)] leading-relaxed">
+                      <b>Consent:</b> I agree that BuilderVerse may place this photo on my certificate and on any
+                      portfolio entry I create. It is stored only on this device and never made public on its own.
+                    </p>
+                  </div>
+                )}
+
                 {photoError && <p className="text-xs text-[var(--bv-danger)] mt-1">{photoError}</p>}
                 <p className="text-[11px] text-[var(--bv-muted)] mt-1">
-                  Your photo is stored only on this device and used only on your certificate. You can remove it any time.
+                  JPG, PNG or WebP, up to 8 MB. Your photo is stored only on this device and used only on your
+                  certificate. You can remove it any time.
                 </p>
               </div>
 
+              {/* Sharing preference for the verification page */}
+              <label className="flex items-start gap-2 p-3.5 rounded-xl bg-[var(--bv-surface-2)] border border-[var(--bv-line)] cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={publiclyShared}
+                  onChange={e => setPubliclyShared(e.target.checked)}
+                  className="mt-0.5 accent-[var(--bv-brand)]"
+                />
+                <span className="text-[11px] text-[var(--bv-ink-soft)] leading-relaxed">
+                  <b>Allow this certificate to be shared publicly.</b> When off, the verification page proves the
+                  achievement without showing your name. You can change this later in My Certificates.
+                </span>
+              </label>
+
               <button
                 onClick={() => setStage('template')}
-                disabled={!displayName.trim()}
+                disabled={!displayName.trim() || !nameConfirmed}
                 className="w-full py-2.5 rounded-xl bg-[var(--bv-brand)] text-white text-xs font-bold hover:bg-[var(--bv-brand-strong)] transition disabled:opacity-40 flex items-center justify-center gap-1.5"
               >
                 Choose My Certificate Design <ArrowRight className="size-3.5" />
@@ -547,6 +729,16 @@ export const GraduationStudioModal: React.FC<Props> = ({
               exportError={exportError}
               copied={copied}
               onCopy={handleCopy}
+              onSaveToPortfolio={() => {
+                onSaveToPortfolio(issued);
+                setSavedToPortfolio(true);
+              }}
+              savedToPortfolio={savedToPortfolio}
+              onContinueLearning={() => {
+                onClose();
+                onContinueLearning();
+              }}
+              reducedMotion={prefersReducedMotion}
               renderCertificate={renderCertificate}
             />
           )}
@@ -571,9 +763,14 @@ export const GraduationStudioModal: React.FC<Props> = ({
                         <div className="text-xs text-[var(--bv-muted)]">{c.level} · Issued {c.issuedAt}</div>
                         <div className="text-[11px] font-mono text-[var(--bv-ink-soft)]">{c.id}</div>
                       </div>
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${c.revoked ? 'bg-[var(--bv-danger-soft)] text-[var(--bv-danger)]' : 'bg-[var(--bv-success-soft)] text-[var(--bv-success)]'}`}>
-                        {c.revoked ? 'Revoked' : 'Valid'}
-                      </span>
+                      <div className="flex flex-col items-end gap-1">
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${c.revoked ? 'bg-[var(--bv-danger-soft)] text-[var(--bv-danger)]' : 'bg-[var(--bv-success-soft)] text-[var(--bv-success)]'}`}>
+                          {c.revoked ? 'Revoked' : c.replacedBy ? 'Replaced' : 'Valid'}
+                        </span>
+                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${c.publiclyShared ? 'bg-[var(--bv-brand-soft)] text-[var(--bv-brand)]' : 'bg-[var(--bv-surface-2)] text-[var(--bv-muted)]'}`}>
+                          {c.publiclyShared ? 'Publicly shared' : 'Private'}
+                        </span>
+                      </div>
                     </div>
                     <div className="flex gap-2 flex-wrap">
                       <button
@@ -587,21 +784,41 @@ export const GraduationStudioModal: React.FC<Props> = ({
                         {c.revoked ? <><Eye className="size-3.5" /> Restore</> : <><EyeOff className="size-3.5" /> Revoke</>}
                       </button>
                       <button
-                        onClick={() => handleCopy('verify', verificationUrl(c.id))}
-                        className="text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[var(--bv-line)] hover:bg-[var(--bv-surface-2)] transition"
-                      >
-                        <Copy className="size-3.5" /> Copy verify link
-                      </button>
-                      <button
                         onClick={() => {
-                          const next = loadCertificates().filter(x => x.id !== c.id);
+                          const next = loadCertificates().map(x => x.id === c.id ? { ...x, publiclyShared: !x.publiclyShared } : x);
                           saveCertificates(next);
                           setCerts(next);
                         }}
-                        className="ml-auto p-1.5 rounded-lg text-[var(--bv-muted)] hover:text-[var(--bv-danger)] hover:bg-[var(--bv-danger-soft)] transition"
-                        aria-label="Delete certificate"
+                        className="text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[var(--bv-line)] hover:bg-[var(--bv-surface-2)] transition"
                       >
-                        <Trash2 className="size-4" />
+                        {c.publiclyShared ? <><EyeOff className="size-3.5" /> Make private</> : <><Eye className="size-3.5" /> Allow sharing</>}
+                      </button>
+                      <button
+                        onClick={() => handleCopy('verify', verificationUrl(c.id))}
+                        className="text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[var(--bv-line)] hover:bg-[var(--bv-surface-2)] transition"
+                      >
+                        <Copy className="size-3.5" /> Verify link
+                      </button>
+                      <button
+                        onClick={() => {
+                          // Reissue: new ID, history preserved (old record kept as replaced).
+                          const replacement = reissueCertificate(c.id);
+                          if (replacement) setCerts(loadCertificates());
+                        }}
+                        className="text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[var(--bv-line)] hover:bg-[var(--bv-surface-2)] transition"
+                      >
+                        <RefreshCw className="size-3.5" /> Reissue (new ID)
+                      </button>
+                      <button
+                        onClick={() => {
+                          // Remove the photo but keep the certificate and learning record.
+                          const next = loadCertificates().map(x => x.id === c.id ? { ...x, photoDataUrl: null } : x);
+                          saveCertificates(next);
+                          setCerts(next);
+                        }}
+                        className="text-xs font-bold flex items-center gap-1 px-2.5 py-1 rounded-lg border border-[var(--bv-line)] hover:bg-[var(--bv-surface-2)] transition"
+                      >
+                        <Trash2 className="size-3.5" /> Remove photo
                       </button>
                     </div>
                   </div>
@@ -624,6 +841,10 @@ function IssuedCertificateView(props: {
   exportError: string;
   copied: 'verify' | 'linkedin' | null;
   onCopy: (kind: 'verify' | 'linkedin', text: string) => void;
+  onSaveToPortfolio: () => void;
+  savedToPortfolio: boolean;
+  onContinueLearning: () => void;
+  reducedMotion: boolean;
   renderCertificate: (
     record: { displayName: string; courseName: string; level: CertificateLevel; issuedAt: string; id: string },
     tpl: CertificateRecord['template'],
@@ -648,8 +869,7 @@ function IssuedCertificateView(props: {
       <div>
         <h3 className="font-extrabold text-base">You did it, {record.displayName}!</h3>
         <p className="text-xs text-[var(--bv-muted)] max-w-md mx-auto leading-relaxed mt-1">
-          Remember when programming felt difficult? You kept learning, solving problems and trying again.
-          This certificate celebrates how far you've come. Be proud. 🌷
+          Every lesson, every bug and every attempt helped you grow. Celebrate how far you've come. 🌷
         </p>
       </div>
 
@@ -681,7 +901,9 @@ function IssuedCertificateView(props: {
           <ShieldCheck className="size-4" /> Verified certificate · {record.id}
         </div>
         <p className="text-[11px] text-[var(--bv-ink-soft)] leading-relaxed">
-          Anyone can check this certificate at the verification link — it carries a checksum built into the ID.
+          {record.publiclyShared
+            ? 'Anyone with the link can confirm this achievement at the verification page.'
+            : 'This certificate is private: the verification page proves the achievement without showing your name.'}
         </p>
         <div className="flex gap-2 flex-wrap">
           <button
@@ -696,9 +918,27 @@ function IssuedCertificateView(props: {
             className="text-xs font-bold flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--bv-surface)] border border-[var(--bv-line)] hover:border-[var(--bv-brand)]/50 transition"
           >
             {props.copied === 'linkedin' ? <CheckCircle2 className="size-3.5 text-[var(--bv-success)]" /> : <Copy className="size-3.5" />}
-            {props.copied === 'linkedin' ? 'Copied!' : 'Copy LinkedIn post'}
+            {props.copied === 'linkedin' ? 'Copied!' : 'Copy LinkedIn announcement'}
           </button>
         </div>
+      </div>
+
+      {/* Celebration actions — nothing is posted anywhere automatically */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <button
+          onClick={props.onSaveToPortfolio}
+          disabled={props.savedToPortfolio}
+          className="py-2.5 rounded-xl border border-[var(--bv-brand)] text-[var(--bv-brand)] text-xs font-bold hover:bg-[var(--bv-brand)] hover:text-white transition disabled:opacity-60 flex items-center justify-center gap-1.5"
+        >
+          {props.savedToPortfolio ? <CheckCircle2 className="size-4 text-[var(--bv-success)]" /> : <Award className="size-4" />}
+          {props.savedToPortfolio ? 'Saved to Portfolio ✓' : 'Save to My Builder Portfolio'}
+        </button>
+        <button
+          onClick={props.onContinueLearning}
+          className="py-2.5 rounded-xl bg-[var(--bv-brand)] text-white text-xs font-bold hover:bg-[var(--bv-brand-strong)] transition flex items-center justify-center gap-1.5"
+        >
+          Continue to next path <ArrowRight className="size-4" />
+        </button>
       </div>
 
       <p className="text-[11px] text-[var(--bv-muted)]">
