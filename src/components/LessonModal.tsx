@@ -10,8 +10,12 @@ interface Props {
   onAskAi?: (concept: string, content: string) => void;
 }
 
-function getLineExplanation(line: string): string {
+function getLineExplanation(line: string, lineNotes?: { line: string; note: string }[]): string {
   const t = line.trim();
+  if (lineNotes) {
+    const hit = lineNotes.find(n => t.includes(n.line));
+    if (hit) return hit.note;
+  }
   if (t.startsWith('//') || t.startsWith('#')) return 'Comment note explaining the intent of the upcoming code block.';
   if (t.includes('<header')) return 'Creates the top landmark banner containing navigation for the page.';
   if (t.includes('<nav')) return 'Defines a block of primary navigation links for users and screen readers.';
@@ -139,6 +143,13 @@ export const LessonModal: React.FC<Props> = ({ path, onClose, onCompleteLesson, 
             <div className="text-xs sm:text-sm text-[var(--bv-ink-soft)] leading-relaxed whitespace-pre-line">
               {currentLesson.content}
             </div>
+            {currentLesson.objectives && currentLesson.objectives.length > 0 && (
+              <ul className="flex flex-wrap gap-1.5">
+                {currentLesson.objectives.map((o, i) => (
+                  <li key={i} className="text-[11px] font-semibold px-2.5 py-1 rounded-full bg-[var(--bv-brand)]/10 text-[var(--bv-brand)] border border-[var(--bv-brand)]/20">🎯 {o}</li>
+                ))}
+              </ul>
+            )}
           </div>
 
           {/* Code Example with "Explain this Line" feature */}
@@ -156,7 +167,7 @@ export const LessonModal: React.FC<Props> = ({ path, onClose, onCompleteLesson, 
             <div className="p-3 text-xs leading-relaxed space-y-0.5">
               {currentLesson.codeSnippet.split('\n').map((line, idx) => {
                 const isSelected = selectedLineIdx === idx;
-                const explanation = getLineExplanation(line);
+                const explanation = getLineExplanation(line, currentLesson.lineNotes);
 
                 return (
                   <div key={idx} className="group/line">
@@ -186,6 +197,33 @@ export const LessonModal: React.FC<Props> = ({ path, onClose, onCompleteLesson, 
               })}
             </div>
           </div>
+
+          {/* Beginner enrichment: why, analogy, output, think, practice, real world, takeaway */}
+          {(currentLesson.whyUseful || currentLesson.analogy || currentLesson.expectedOutput || currentLesson.thinkQuestion || currentLesson.practiceActivity || currentLesson.realWorldApp || currentLesson.takeaway) && (
+            <div className="grid sm:grid-cols-2 gap-3">
+              {currentLesson.whyUseful && (
+                <div className="p-4 rounded-2xl border border-[var(--bv-line)] bg-[var(--bv-surface)] text-xs leading-relaxed"><strong>💡 Why it matters:</strong> {currentLesson.whyUseful}</div>
+              )}
+              {currentLesson.analogy && (
+                <div className="p-4 rounded-2xl border border-[var(--bv-line)] bg-[var(--bv-surface)] text-xs leading-relaxed"><strong>🌱 Analogy:</strong> {currentLesson.analogy}</div>
+              )}
+              {currentLesson.expectedOutput && (
+                <div className="p-4 rounded-2xl bg-zinc-950 border border-zinc-800 text-xs"><div className="text-[11px] font-bold text-zinc-400 mb-1">✅ Expected output</div><pre className="font-mono text-emerald-300 whitespace-pre-wrap">{currentLesson.expectedOutput}</pre></div>
+              )}
+              {currentLesson.thinkQuestion && (
+                <div className="p-4 rounded-2xl border border-[var(--bv-line)] bg-[var(--bv-surface)] text-xs leading-relaxed"><strong>🤔 Think:</strong> {currentLesson.thinkQuestion}</div>
+              )}
+              {currentLesson.practiceActivity && (
+                <div className="p-4 rounded-2xl border border-[var(--bv-line)] bg-[var(--bv-surface)] text-xs leading-relaxed"><strong>✏️ Try it:</strong> {currentLesson.practiceActivity}</div>
+              )}
+              {currentLesson.realWorldApp && (
+                <div className="p-4 rounded-2xl border border-[var(--bv-line)] bg-[var(--bv-surface)] text-xs leading-relaxed"><strong>🌍 Real use:</strong> {currentLesson.realWorldApp}</div>
+              )}
+              {currentLesson.takeaway && (
+                <div className="p-4 rounded-2xl border border-[var(--bv-brand)]/30 bg-[var(--bv-brand)]/5 text-xs leading-relaxed sm:col-span-2"><strong>📌 Remember:</strong> {currentLesson.takeaway}</div>
+              )}
+            </div>
+          )}
 
           {/* Verification Quiz */}
           <div className="p-5 rounded-2xl border border-[var(--bv-line)] bg-[var(--bv-surface-2)]/60 space-y-4">

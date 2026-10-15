@@ -6,6 +6,16 @@ export interface Lesson {
   summary: string;
   content: string;
   codeSnippet: string;
+  /** Beginner-friendly enrichment (all optional so existing lessons keep working). */
+  whyUseful?: string;
+  analogy?: string;
+  lineNotes?: { line: string; note: string }[];
+  expectedOutput?: string;
+  thinkQuestion?: string;
+  practiceActivity?: string;
+  realWorldApp?: string;
+  takeaway?: string;
+  objectives?: string[];
   quiz: {
     question: string;
     options: string[];
@@ -20,6 +30,9 @@ export interface LearningPath {
   title: string;
   tagline: string;
   description: string;
+  /** Distinguishes real programming languages from frameworks / tools / interfaces. */
+  kind?: 'language' | 'framework' | 'tool' | 'interface' | 'concept';
+  kindLabel?: string;
   icon: 'code' | 'layout' | 'sparkles' | 'mouse-pointer' | 'globe' | 'git-branch';
   badgeColor: string;
   lessonCount: number;
@@ -78,6 +91,8 @@ export const LEARNING_PATHS: LearningPath[] = [
     id: 'html',
     slug: 'html',
     title: 'HTML',
+    kind: 'language',
+    kindLabel: 'Markup language',
     tagline: 'Give your pages structure',
     description: 'HTML is the friendly skeleton of every website. Learn how to build meaningful pages with headings, text, images, links, forms and semantic structure.',
     icon: 'layout',
@@ -174,6 +189,8 @@ When you use <main>, <header>, <nav>, and <article>, search engines understand y
     id: 'css',
     slug: 'css',
     title: 'CSS',
+    kind: 'language',
+    kindLabel: 'Stylesheet language',
     tagline: 'Make it look intentional',
     description: 'CSS turns a plain document into a designed interface. Learn the box model, flexbox, grid, responsive design and how to style with confidence.',
     icon: 'code',
@@ -268,6 +285,8 @@ Always set "box-sizing: border-box;" globally so padding doesn't inflate element
     id: 'javascript',
     slug: 'javascript',
     title: 'JavaScript',
+    kind: 'language',
+    kindLabel: 'Programming language',
     tagline: 'Make it interactive',
     description: 'JavaScript is where pages come alive. Start with variables and conditions, then work up to functions, arrays, objects and the DOM.',
     icon: 'sparkles',
@@ -348,6 +367,8 @@ async function runCountdown() {
     id: 'dom',
     slug: 'dom',
     title: 'DOM',
+    kind: 'concept',
+    kindLabel: 'Web concept',
     tagline: 'Control the page with code',
     description: 'The DOM is how JavaScript reaches into your page. Select elements, listen for events, create content dynamically and build real interactions.',
     icon: 'mouse-pointer',
@@ -409,6 +430,8 @@ list.addEventListener('click', (event) => {
     id: 'apis',
     slug: 'apis',
     title: 'APIs',
+    kind: 'interface',
+    kindLabel: 'Interface & protocol',
     tagline: 'Talk to the outside world',
     description: 'Learn how web apps fetch data from servers with fetch, JSON, async/await and how to handle the unhappy paths that every real app faces.',
     icon: 'globe',
@@ -473,6 +496,8 @@ list.addEventListener('click', (event) => {
     id: 'git',
     slug: 'git',
     title: 'Git & GitHub',
+    kind: 'tool',
+    kindLabel: 'Tool & platform',
     tagline: 'Save, share, collaborate',
     description: 'Version control is a builder\'s safety net. Learn commits, branches, pushing to GitHub and recovering gracefully when things go wrong.',
     icon: 'git-branch',
@@ -538,6 +563,8 @@ const theme = 'rose-gold';
     id: 'python',
     slug: 'python',
     title: 'Python',
+    kind: 'language',
+    kindLabel: 'Programming language',
     tagline: 'Think in plain English, run real programs',
     description: 'Python reads almost like English, which makes it the kindest first programming language. Learn variables, conditions, loops and functions by building small programs that actually do something.',
     icon: 'code',
@@ -562,6 +589,12 @@ print("Hello,", name)
 age = 17
 next_year = age + 1
 print("Next year you will be", next_year)`,
+        whyUseful: 'Variables plus input and output turn a silent script into an interactive program.',
+        analogy: 'A variable is a labelled jar you can reopen and reuse later.',
+        thinkQuestion: 'What happens to next_year if you change age after computing it?',
+        practiceActivity: 'Ask for a favourite food, store it, and print a sentence using it.',
+        takeaway: 'Variables store values; print() shows them and input() reads text.',
+        objectives: ['Create variables with =', 'Use print() for output', 'Read text with input()'],
         quiz: {
           question: 'What does input("Age: ") return in Python 3?',
           options: [
@@ -646,6 +679,8 @@ print("First score:", scores[0])`,
     id: 'java',
     slug: 'java',
     title: 'Java',
+    kind: 'language',
+    kindLabel: 'Programming language',
     tagline: 'Strong typing, real engineering habits',
     description: 'Java powers Android apps, banking systems and millions of servers. Its strict rules feel heavy at first, but they teach you the discipline that larger teams rely on.',
     icon: 'code',
@@ -759,6 +794,8 @@ An array holds a fixed number of values of the same type. int[] marks = new int[
     id: 'c',
     slug: 'c',
     title: 'C',
+    kind: 'language',
+    kindLabel: 'Programming language',
     tagline: 'Close to the machine, clear about memory',
     description: 'C has powered operating systems for over fifty years. Learning it teaches you what other languages quietly do for you — and makes every language you learn afterwards easier to understand.',
     icon: 'code',
@@ -859,6 +896,14 @@ int main() {
     printf("Double 21: %d\\n", doubleIt(21));
     return 0;
 }`,
+        whyUseful: 'Functions stop copy-paste; arrays hold collections every program needs.',
+        analogy: 'A function is a kitchen gadget you build once and reuse; an array is a row of numbered jars.',
+        expectedOutput: `Average: 82.3\nDouble 21: 42`,
+        thinkQuestion: 'Why does the loop use i < 3 instead of i <= 3 for an array of size 3?',
+        practiceActivity: 'Add a function biggest(marks, size) returning the largest mark, and print it.',
+        realWorldApp: 'Sensor drivers read arrays of readings and average them with functions like these.',
+        takeaway: 'Declare functions before use; C arrays never check bounds — your loop condition is the safety net.',
+        objectives: ['Write a C function', 'Loop over an array safely', 'Explain undefined behaviour'],
         quiz: {
           question: 'What happens in C when you access marks[10] on an array of size 3?',
           options: [
@@ -869,6 +914,193 @@ int main() {
           ],
           correctIndex: 2,
           explanation: 'C does not check array bounds. Out-of-range access reads unrelated memory (undefined behaviour) — the reason buffer bugs are so famous.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'sql',
+    slug: 'sql',
+    title: 'SQL',
+    kind: 'language',
+    kindLabel: 'Query language',
+    tagline: 'Ask questions of your data',
+    description: 'SQL is how applications store and retrieve data. Learn to create tables, insert records, filter with WHERE and combine tables with JOIN — the backbone of almost every app.',
+    icon: 'globe',
+    badgeColor: '#A65F79',
+    lessonCount: 2,
+    xpReward: 110,
+    lessons: [
+      {
+        id: 'sql-select-where',
+        title: 'SELECT & WHERE: ask for data',
+        duration: '7 min',
+        xp: 25,
+        summary: 'Read rows from a table and filter them with WHERE conditions.',
+        content: `A database table is a spreadsheet with strict columns: every row in builders has the same fields. SELECT chooses the columns, FROM chooses the table, and WHERE filters the rows.`,
+        codeSnippet: `SELECT name, xp FROM builders
+WHERE xp >= 100
+ORDER BY xp DESC;`,
+        whyUseful: 'Every app list screen — leaderboards, feeds, search — is a SELECT with a WHERE underneath.',
+        analogy: 'SELECT points at columns; WHERE holds a filter funnel over the rows.',
+        expectedOutput: `Maya | 150`,
+        thinkQuestion: 'What comes back if you forget the WHERE line?',
+        practiceActivity: 'Write a query returning names of builders with xp under 100.',
+        realWorldApp: 'The leaderboard is exactly this query: top XP, best first.',
+        takeaway: 'SELECT columns FROM table WHERE condition ORDER BY column.',
+        objectives: ['SELECT columns', 'Filter with WHERE', 'Sort results'],
+        quiz: {
+          question: 'What does WHERE xp >= 100 do?',
+          options: ['Adds 100 XP to every row', 'Keeps only rows with xp of 100+', 'Sorts rows by xp', 'Deletes rows below 100'],
+          correctIndex: 1,
+          explanation: 'WHERE filters rows: only rows satisfying the condition are returned.'
+        }
+      },
+      {
+        id: 'sql-joins',
+        title: 'JOINs: combine two tables',
+        duration: '9 min',
+        xp: 30,
+        summary: 'Link builders to their projects with INNER JOIN on a shared key.',
+        content: `Real databases split data: builders in one table, projects in another, linked by builder_id. JOIN reassembles them. INNER JOIN keeps only rows with a match on both sides.`,
+        codeSnippet: `SELECT builders.name, projects.title
+FROM builders
+INNER JOIN projects
+  ON projects.builder_id = builders.id;`,
+        whyUseful: 'Portfolios and dashboards are JOINs: users + their content in one query.',
+        analogy: 'Two phone books stapled together wherever IDs match.',
+        expectedOutput: `Maya | Habit Bloom`,
+        thinkQuestion: 'Does a builder with zero projects appear in an INNER JOIN?',
+        practiceActivity: 'Sketch a certificates table and JOIN it to builders.',
+        realWorldApp: 'My Showcase joins your profile to published projects.',
+        takeaway: 'JOIN ... ON links tables; INNER keeps matches only.',
+        objectives: ['Explain foreign keys', 'Write an INNER JOIN'],
+        quiz: {
+          question: 'What does ON projects.builder_id = builders.id do?',
+          options: ['Filters to published projects', 'Declares how rows are matched', 'Sorts results', 'Creates a table'],
+          correctIndex: 1,
+          explanation: 'ON defines the matching rule between the two tables.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'cpp',
+    slug: 'cpp',
+    title: 'C++',
+    kind: 'language',
+    kindLabel: 'Programming language',
+    tagline: 'C with superpowers: objects and vectors',
+    description: 'C++ builds on C with classes and growable vectors. It powers games and browsers — and teaches how objects work under the hood.',
+    icon: 'code',
+    badgeColor: '#A65F79',
+    lessonCount: 2,
+    xpReward: 110,
+    lessons: [
+      {
+        id: 'cpp-vector',
+        title: 'cout and growable vectors',
+        duration: '8 min',
+        xp: 25,
+        summary: 'Print with cout and store flexible lists with std::vector.',
+        content: `C++ keeps C's speed but adds friendlier tools: cout << sends text to the screen, and std::vector is an array that grows itself with push_back().`,
+        codeSnippet: `#include <iostream>\n#include <vector>\nusing namespace std;\n\nint main() {\n    vector<int> marks = {70, 85};\n    marks.push_back(92);\n    cout << "Count: " << marks.size() << endl;\n    return 0;\n}`,
+        whyUseful: 'Vectors remove fixed-size pain while keeping C speed.',
+        analogy: 'A C array is a fixed egg carton; a vector stretches.',
+        expectedOutput: `Count: 3`,
+        thinkQuestion: 'Why is marks.size() better than hard-coding 3?',
+        practiceActivity: 'Add another push_back and print each mark with a loop.',
+        realWorldApp: 'Games store enemies and bullets in vectors that grow every frame.',
+        takeaway: 'cout prints; vector grows with push_back and reports size().',
+        objectives: ['Use cout', 'Grow a vector'],
+        quiz: {
+          question: 'What does marks.push_back(92) do?',
+          options: ['Overwrites the first element', 'Appends 92 and grows by one', 'Sorts the vector', 'Deletes the last element'],
+          correctIndex: 1,
+          explanation: 'push_back appends one element at the end.'
+        }
+      },
+      {
+        id: 'cpp-class',
+        title: 'Your first class',
+        duration: '8 min',
+        xp: 25,
+        summary: 'Bundle data and behaviour with classes.',
+        content: `A class bundles data with the actions on it. A constructor (same name as the class) runs automatically when you create an object.`,
+        codeSnippet: `class Student {\npublic:\n    string name;\n    int marks;\n    Student(string n, int m) { name = n; marks = m; }\n    bool passed() { return marks >= 50; }\n};`,
+        whyUseful: 'Classes bridge C procedures to Java-style OOP.',
+        analogy: 'A class is a cookie cutter; objects are the cookies.',
+        expectedOutput: `Maya passed`,
+        thinkQuestion: 'What breaks if passed() reads an undeclared variable?',
+        practiceActivity: 'Add a grade() function returning A/B/C.',
+        realWorldApp: 'Game characters and bank accounts are class objects.',
+        takeaway: 'class bundles data + functions; constructor initializes objects.',
+        objectives: ['Define a class', 'Write a constructor'],
+        quiz: {
+          question: 'When does a constructor run?',
+          options: ['Only when called by name', 'Automatically on object creation', 'At program end', 'Only for inherited classes'],
+          correctIndex: 1,
+          explanation: 'The constructor runs automatically to set up each new object.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'typescript',
+    slug: 'typescript',
+    title: 'TypeScript',
+    kind: 'language',
+    kindLabel: 'Programming language',
+    tagline: 'JavaScript with types',
+    description: 'TypeScript adds types to JavaScript to catch bugs early.',
+    icon: 'code',
+    badgeColor: '#A65F79',
+    lessonCount: 1,
+    xpReward: 30,
+    lessons: [
+      {
+        id: 'ts-basics',
+        title: 'Types and interfaces',
+        duration: '7 min',
+        xp: 25,
+        summary: 'Add string, number and interface types to plain JavaScript.',
+        content: `TypeScript lets you label what type each variable holds. An interface describes the shape of an object so mistakes are caught before the code runs.`,
+        codeSnippet: `let xp: number = 25;\ninterface Builder { name: string; xp: number; }`,
+        quiz: {
+          question: 'What does `: number` do in `let xp: number`?',
+          options: ['Sets xp to number', 'Declares xp must hold a number', 'Converts xp to text', 'Makes xp optional'],
+          correctIndex: 1,
+          explanation: 'Type annotations declare the expected type for type-checking.'
+        }
+      }
+    ]
+  },
+  {
+    id: 'react',
+    slug: 'react',
+    title: 'React',
+    kind: 'framework',
+    kindLabel: 'UI framework',
+    tagline: 'Build interactive UIs',
+    description: 'React builds reusable components that update with your data.',
+    icon: 'sparkles',
+    badgeColor: '#A65F79',
+    lessonCount: 1,
+    xpReward: 30,
+    lessons: [
+      {
+        id: 'react-basics',
+        title: 'Components and props',
+        duration: '7 min',
+        xp: 25,
+        summary: 'Render reusable components that receive data via props.',
+        content: `A React component is a function that returns UI. Props pass data into it, so one component can render many different builders.`,
+        codeSnippet: `function Hello({ name }) {\n  return <h1>Hello, {name}</h1>;\n}`,
+        quiz: {
+          question: 'What are props in React?',
+          options: ['CSS styles', 'Inputs passed into a component', 'Build settings', 'Database rows'],
+          correctIndex: 1,
+          explanation: 'Props are read-only inputs a parent passes to a child component.'
         }
       }
     ]

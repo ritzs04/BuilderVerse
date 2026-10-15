@@ -1009,7 +1009,7 @@ export default function App() {
                 Structured Paths
               </div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-[var(--bv-ink)]">
-                Nine paths. One goal: real skill.
+                {LEARNING_PATHS.length} paths. One goal: real skill.
               </h2>
               <p className="text-sm text-[var(--bv-muted)] max-w-2xl">
                 Every lesson ends with a supportive mini quiz, so completing a path means you can actually use it — not just recognize it.
@@ -1082,6 +1082,11 @@ export default function App() {
                       <h3 className="mt-4 text-lg font-bold text-[var(--bv-ink)] group-hover:text-[var(--bv-brand)] transition">
                         {path.title}
                       </h3>
+                      {path.kindLabel && (
+                        <span className="inline-block mt-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[var(--bv-surface-2)] border border-[var(--bv-line)] text-[var(--bv-muted)]">
+                          {path.kindLabel}
+                        </span>
+                      )}
                       <p className="text-xs font-semibold text-[var(--bv-brand)] mt-0.5">
                         {path.tagline}
                       </p>
