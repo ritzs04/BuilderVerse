@@ -36,6 +36,9 @@ import { GraduationStudioModal } from './components/GraduationStudioModal';
 import { CertificateVerifyView } from './components/CertificateVerifyView';
 import { CertificateRecord, verificationUrl } from './utils/certificates';
 import { IdeaGeneratorModal, GeneratedIdea } from './components/IdeaGeneratorModal';
+import { StudyRoomsModal } from './components/StudyRoomsModal';
+import { TeamStudioModal } from './components/TeamStudioModal';
+import { CommunityModal } from './components/CommunityModal';
 import { ShowcaseModal } from './components/ShowcaseModal';
 import { WeeklyChallengesModal } from './components/WeeklyChallengesModal';
 import { triggerProjectConfetti, triggerPathCompleteConfetti } from './utils/confetti';
@@ -155,6 +158,9 @@ export default function App() {
   });
 
   // Modals state
+  const [isStudyRoomsOpen, setIsStudyRoomsOpen] = useState(false);
+  const [isTeamStudioOpen, setIsTeamStudioOpen] = useState(false);
+  const [isCommunityOpen, setIsCommunityOpen] = useState(false);
   const [activePath, setActivePath] = useState<LearningPath | null>(null);
   const [activeThinkingPuzzle, setActiveThinkingPuzzle] = useState<ThinkingPuzzle | null>(null);
   const [activeDebugPuzzle, setActiveDebugPuzzle] = useState<DebugPuzzle | null>(null);
@@ -569,6 +575,9 @@ export default function App() {
             >
               <span>Ideas 💡</span>
             </button>
+            <button onClick={() => setIsStudyRoomsOpen(true)} className="hover:text-[var(--bv-brand)] transition whitespace-nowrap shrink-0 flex items-center gap-1"><span>Study Rooms 👥</span></button>
+            <button onClick={() => setIsTeamStudioOpen(true)} className="hover:text-[var(--bv-brand)] transition whitespace-nowrap shrink-0 flex items-center gap-1"><span>Teams 🤝</span></button>
+            <button onClick={() => setIsCommunityOpen(true)} className="hover:text-[var(--bv-brand)] transition whitespace-nowrap shrink-0 flex items-center gap-1"><span>Community 🌸</span></button>
             <button 
               onClick={() => setIsGardenOpen(true)}
               className="hover:text-[var(--bv-brand)] transition whitespace-nowrap shrink-0"
@@ -730,6 +739,44 @@ export default function App() {
           onCompleteToday={handleCompleteDailyGoal} 
           onEarnXp={handleEarnXp} 
         />
+
+        {/* 🌱 CONTINUE LEARNING + GENTLE COMEBACK 🌱 */}
+        {(() => {
+          let resumePath: LearningPath | null = null;
+          let resumeLesson = '';
+          for (const p of LEARNING_PATHS) {
+            const next = p.lessons.find(l => !completedLessonIds.includes(l.id));
+            if (next) { resumePath = p; resumeLesson = next.title; break; }
+          }
+          let daysAway = 0;
+          try {
+            const last = localStorage.getItem('bv_last_streak_date');
+            if (last) daysAway = Math.max(0, Math.round((Date.now() - new Date(last + 'T12:00:00').getTime()) / 86400000));
+          } catch { /* best-effort */ }
+          const comeback = daysAway >= 2;
+          if (!resumePath) return null;
+          const rp: LearningPath = resumePath;
+          return (
+            <section className="py-6 px-4 sm:px-6">
+              <div className="max-w-6xl mx-auto p-5 rounded-3xl border border-[var(--bv-line)] bg-[var(--bv-surface)] shadow-xs flex flex-col sm:flex-row sm:items-center gap-4">
+                <span className="grid size-12 place-items-center rounded-2xl bg-[var(--bv-brand-soft)] text-2xl shrink-0">🌱</span>
+                <div className="flex-1">
+                  <div className="text-xs font-bold uppercase tracking-wider text-[var(--bv-brand)]">Continue learning</div>
+                  <h3 className="font-extrabold text-[var(--bv-ink)]">{comeback ? "Welcome back — you don't have to start over. 🌷" : 'Pick up right where you left off 🌷'}</h3>
+                  <p className="text-xs text-[var(--bv-muted)] mt-0.5">
+                    {comeback
+                      ? `It's been ${daysAway} day${daysAway === 1 ? '' : 's'} — one difficult stretch never erases your progress. Next tiny step: “${resumeLesson}” in ${rp.title}.`
+                      : `Next tiny step: “${resumeLesson}” in the ${rp.title} path. Small steps count.`}
+                  </p>
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <button onClick={() => setActivePath(rp)} className="px-4 py-2 rounded-xl bg-[var(--bv-brand)] text-white text-xs font-bold hover:bg-[var(--bv-brand-strong)] transition">Resume: {rp.title}</button>
+                  <a href="#learn" className="px-4 py-2 rounded-xl border border-[var(--bv-line)] text-xs font-bold hover:bg-[var(--bv-surface-2)] transition">All paths</a>
+                </div>
+              </div>
+            </section>
+          );
+        })()}
 
         {/* MASCOT TIP */}
         <MascotTip 
@@ -1834,6 +1881,10 @@ export default function App() {
         onClose={() => setIsChallengesOpen(false)}
         onSubmitBuild={handleSubmitChallengeBuild}
       />
+
+      <StudyRoomsModal isOpen={isStudyRoomsOpen} onClose={() => setIsStudyRoomsOpen(false)} username={username} />
+      <TeamStudioModal isOpen={isTeamStudioOpen} onClose={() => setIsTeamStudioOpen(false)} username={username} />
+      <CommunityModal isOpen={isCommunityOpen} onClose={() => setIsCommunityOpen(false)} username={username} onEarnXp={handleEarnXp} />
 
       <AvatarGalleryModal
         isOpen={isAvatarGalleryOpen}

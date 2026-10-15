@@ -12,7 +12,11 @@ BuilderVerse is a **free, project-based programming education platform** for stu
 
 | Area | What students get |
 |---|---|
-| **Learning Paths** | HTML, CSS, JavaScript, DOM, APIs, Git & GitHub, Python, Java, C — each with real lessons, code examples, line explanations and quizzes |
+| **Learning Paths** | HTML, CSS, JavaScript, Python, Java, C, SQL, C++, TypeScript + React (labeled language / framework / tool), beginner enrichment (why, analogy, output, think, try, remember) |
+| **Continue Learning** | Resume next incomplete lesson + gentle comeback message after breaks; progress always survives |
+| **Study Rooms** | Private invite-code rooms: shared checklist, focus timer, session notes, revoke code |
+| **Team Project Studio** | Teams with invite codes, assigned tasks, contributions log, owner permissions |
+| **Builder Community** | Showcase / questions / tips with search, bookmarks, link validation, guidelines |
 | **Thinking Gym** | Logic & problem-solving puzzles (switches, fencepost, edge cases) with reasoning explanations |
 | **Error Companion** | Friendly, never-shaming help for common errors + Sprout AI (Gemini) mentor with an offline fallback |
 | **Guided Projects** | Progressively harder builds with checklists and skills gained |
