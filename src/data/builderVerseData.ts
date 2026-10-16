@@ -127,6 +127,8 @@ When you use <main>, <header>, <nav>, and <article>, search engines understand y
         thinkQuestion: 'If every part of your page was a <div>, what would a blind user hear when they try to jump straight to the main content?',
         practiceActivity: 'Take any page you have built and replace generic <div> wrappers with <header>, <nav>, <main> and <footer>. Reload and inspect the Elements panel to see the new structure.',
         takeaway: 'Use <div> only when no semantic tag fits. <main> appears at most once per page — it is THE unique content.',
+        realWorldApp: 'Every news site and blog uses article and section tags so readers, search engines and screen readers navigate the same structure.',
+        objectives: ['Explain semantic vs non-semantic tags', 'Structure a page with header, nav, main and article', 'Describe why semantics help accessibility'],
         quiz: {
           question: 'Which element should encapsulate the dominant, unique content of an HTML document?',
           options: ['<section>', '<main>', '<div>', '<body>'],
@@ -158,6 +160,8 @@ When you use <main>, <header>, <nav>, and <article>, search engines understand y
         thinkQuestion: 'What happens when you click the label text — does the cursor land in the input? What breaks when "for" does not match the id?',
         practiceActivity: 'Build a signup form with three labelled inputs (name, email, password). Try submitting an invalid email and watch the browser stop you.',
         takeaway: 'The label "for" must exactly equal the input id. type="email" + required gives you validation for free — never skip labels.',
+        realWorldApp: 'Signups, contact forms and checkout pages — every form that collects data relies on labels, required and typed inputs.',
+        objectives: ['Pair inputs with labels using for and id', 'Add validation attributes like required and type', 'Build a working signup form'],
         quiz: {
           question: 'What connects an <input> to its corresponding <label>?',
           options: [
@@ -189,6 +193,8 @@ When you use <main>, <header>, <nav>, and <article>, search engines understand y
         thinkQuestion: 'Delete the viewport meta tag and open the page in mobile device mode — why does everything suddenly look tiny?',
         practiceActivity: 'Remove the viewport tag from one of your pages, screenshot it in device mode, then add it back and compare the two screenshots.',
         takeaway: 'Every modern page needs charset, viewport and title — the three meta tags you should never omit.',
+        realWorldApp: 'The browser tab title, the Google search snippet and the WhatsApp link preview are all driven by tags in the head.',
+        objectives: ['Set charset, viewport and title', 'Explain why viewport matters on mobile', 'Add an Open Graph title for link previews'],
         quiz: {
           question: 'Why is the viewport meta tag critical for modern web development?',
           options: [
@@ -247,6 +253,8 @@ Always set "box-sizing: border-box;" globally so padding doesn't inflate element
         thinkQuestion: 'With the default box-sizing: content-box, how wide would .card actually be? Count the padding and border yourself.',
         practiceActivity: 'In DevTools, toggle box-sizing on .card in the Styles pane and watch the computed width number change live.',
         takeaway: 'Set * { box-sizing: border-box } at the top of every stylesheet — it is the single most reused CSS rule in real projects.',
+        realWorldApp: 'Nearly every stylesheet starts with a border-box reset — it is why cards and buttons keep the widths they promise.',
+        objectives: ['Describe content, padding, border and margin', 'Apply box-sizing: border-box', 'Predict an element total rendered width'],
         quiz: {
           question: 'What happens to element width when box-sizing is set to border-box and you add 20px padding?',
           options: [
@@ -278,6 +286,8 @@ Always set "box-sizing: border-box;" globally so padding doesn't inflate element
         thinkQuestion: 'If you changed flex-direction to column, which property would centre items horizontally — justify-content or align-items?',
         practiceActivity: 'Make a div 400px tall and centre a single button exactly in its middle with only three lines of flex CSS.',
         takeaway: 'Main axis follows flex-direction; cross axis is always perpendicular. Perfect centring = justify-content: center + align-items: center.',
+        realWorldApp: 'Navigation bars, button groups and hero sections are centred with two lines of flex CSS every day.',
+        objectives: ['Create a flex container', 'Centre items on both axes', 'Explain main axis vs cross axis'],
         quiz: {
           question: 'In a standard row flex container, which property centers items vertically?',
           options: ['justify-content', 'align-items', 'text-align', 'vertical-align'],
@@ -303,6 +313,8 @@ Always set "box-sizing: border-box;" globally so padding doesn't inflate element
         thinkQuestion: 'What would change if you wrote minmax(500px, 1fr) instead? Which devices would struggle with that?',
         practiceActivity: 'Open your grid page and slowly drag the browser window narrower — count how many times the card rows reflow, then try different minmax values.',
         takeaway: 'minmax(min, max) sets a size range; 1fr means "share leftover space equally"; auto-fit creates as many columns as fit.',
+        realWorldApp: 'Product grids, dashboards and photo galleries use repeat(auto-fit, minmax(...)) to reflow on any screen.',
+        objectives: ['Build a grid with auto-fit and minmax', 'Explain what 1fr means', 'Create a layout that adapts without media queries'],
         quiz: {
           question: 'What does "minmax(280px, 1fr)" accomplish inside a grid template?',
           options: [
@@ -355,6 +367,8 @@ console.log(activeBuilders); // ['Alex', 'Sam']`,
         thinkQuestion: 'What would builders.filter(b => b.streak >= 3) return if you removed the .map(b => b.name) after it?',
         practiceActivity: 'Add a .filter() that keeps builders with xp above 500, then .map() them into strings like "Sam: 890 XP".',
         takeaway: 'map transforms every item, filter keeps some items, and neither changes the original array.',
+        realWorldApp: 'Leaderboards, task lists and product catalogues are arrays of objects rendered with map and filter.',
+        objectives: ['Model data with objects inside arrays', 'Transform lists with .map()', 'Subset lists with .filter()'],
         quiz: {
           question: 'Which array method transforms every item in an array and returns a new array of the same length?',
           options: ['.filter()', '.map()', '.reduce()', '.forEach()'],
@@ -381,6 +395,8 @@ console.log(calculateXpBonus(100)); // 120`,
         thinkQuestion: 'What happens if you try to read bonus from outside the function? Name the error you would see.',
         practiceActivity: 'Call calculateXpBonus(200, 1.5) and predict the output before running it. Then declare a variable inside an if block and try to log it outside.',
         takeaway: 'const/let are block-scoped; arrow functions keep the "this" of where they were written; default parameters fill in missing arguments.',
+        realWorldApp: 'Every reusable utility in a codebase — formatters, calculators, validators — is a function with clear scope.',
+        objectives: ['Write arrow functions with default parameters', 'Explain block scope for const and let', 'Return values from functions'],
         quiz: {
           question: 'What scope do variables declared with "const" and "let" have in JavaScript?',
           options: ['Global only', 'Function only', 'Block scope (enclosed by {})', 'Module scope only'],
@@ -408,6 +424,8 @@ async function runCountdown() {
         thinkQuestion: 'What would happen to the countdown if you removed the await in front of sleep(1000)?',
         practiceActivity: 'Change the delay to 3000ms and add a third log line after "Launch!". Predict the order, then run it.',
         takeaway: 'async functions always return a Promise; await pauses only that function, never the whole page.',
+        realWorldApp: 'Loading spinners, delayed notifications and API calls all rely on Promises and async/await.',
+        objectives: ['Explain what a Promise represents', 'Use async/await to pause a function', 'Predict execution order with timers'],
         quiz: {
           question: 'What does an async function always return in JavaScript?',
           options: ['A boolean', 'A Promise', 'undefined', 'A callback'],
@@ -452,6 +470,8 @@ list.addEventListener('click', (event) => {
         thinkQuestion: 'Why does the code use closest() instead of checking event.target directly? What happens if the delete icon is nested inside the button?',
         practiceActivity: 'Add new list items with JavaScript after the page loads and confirm delete still works without adding any new listeners.',
         takeaway: 'Events bubble from the clicked element upward — listen once on a parent and use .closest() to find what was clicked.',
+        realWorldApp: 'Long task lists, tables with delete buttons and dynamic menus use one parent listener instead of per-item listeners.',
+        objectives: ['Attach a listener to a parent container', 'Find the real target with .closest()', 'Handle items added after page load'],
         quiz: {
           question: 'What DOM mechanism enables event delegation by letting events bubble up the hierarchy?',
           options: ['Event Bubbling', 'Event Hoisting', 'Garbage Collection', 'Shadow DOM'],
@@ -478,6 +498,8 @@ list.addEventListener('click', (event) => {
         thinkQuestion: 'What would happen if someone typed <img onerror=alert(1)> as their name and you rendered it with innerHTML?',
         practiceActivity: 'Create a function addComment(text) that builds a comment node with createElement and textContent, then add three comments to a list.',
         takeaway: 'Never render user input with innerHTML. createElement + textContent is the safe default.',
+        realWorldApp: 'Comment sections, toast notifications and infinite feeds build DOM nodes at runtime with createElement and textContent.',
+        objectives: ['Create elements with document.createElement', 'Explain why textContent beats innerHTML', 'Describe XSS in beginner terms'],
         quiz: {
           question: 'Why is textContent preferred over innerHTML when inserting user-provided strings?',
           options: [
@@ -531,6 +553,8 @@ list.addEventListener('click', (event) => {
         thinkQuestion: 'Why does the catch block also matter if you already check res.ok? Give one error it catches that the ok check cannot.',
         practiceActivity: 'Call fetchCurrentWeather("Paris") and then fetchCurrentWeather("") — compare what each returns, then write a displayWeather function that shows "offline" on failure.',
         takeaway: 'fetch only rejects on network failure. HTTP errors need response.ok; everything else lives in try/catch.',
+        realWorldApp: 'Weather widgets, news feeds and price checkers all fetch remote data with try/catch and response.ok checks.',
+        objectives: ['Wrap fetch in try/catch', 'Check response.ok before parsing JSON', 'Return a friendly error state on failure'],
         quiz: {
           question: 'Why does fetch() not reject when a server responds with a 404 or 500 HTTP error code?',
           options: [
@@ -561,6 +585,8 @@ list.addEventListener('click', (event) => {
         thinkQuestion: 'Which method would you use to update only the done field of an existing task — PUT or PATCH? What is the difference?',
         practiceActivity: 'Write (from memory) the fetch call that GETs /api/tasks and the one that DELETEs /api/tasks/12 — headers and body yourself, no copying.',
         takeaway: 'GET reads, POST creates, PUT/PATCH update, DELETE removes. JSON bodies need Content-Type: application/json and JSON.stringify().',
+        realWorldApp: 'Any app with a backend — todo lists, shops, forums — maps its features to GET, POST, PUT and DELETE.',
+        objectives: ['Map CRUD actions to HTTP methods', 'Send JSON with the right headers', 'Describe what the server returns on create'],
         quiz: {
           question: 'Which HTTP method should be used when creating a brand-new resource on a REST API?',
           options: ['GET', 'POST', 'PATCH', 'OPTIONS'],
@@ -610,6 +636,8 @@ git push -u origin feat/user-dashboard`,
         thinkQuestion: 'What would happen if you ran git push before git add and git commit? Where would your changes go?',
         practiceActivity: 'In any repo: create a branch, edit one file, commit with a message starting "feat:" or "fix:", push it, then merge it back.',
         takeaway: 'Branch → change → commit → push → pull request. Never commit unfinished experiments straight to main.',
+        realWorldApp: 'Every team project on GitHub flows through branches, commits and pull requests — this is the daily developer workflow.',
+        objectives: ['Create and switch branches', 'Stage and commit with clear messages', 'Push a feature branch for review'],
         quiz: {
           question: 'Which Git command creates a new branch and immediately switches your working directory to it?',
           options: ['git branch new-feature', 'git checkout -b new-feature', 'git merge new-feature', 'git init new-feature'],
@@ -635,6 +663,8 @@ const theme = 'rose-gold';
         thinkQuestion: 'Is a conflict an error that means you broke something? What does Git actually want from you?',
         practiceActivity: 'Create two branches, edit the same line in both, merge, resolve the markers by hand, and commit. You have now resolved your first conflict.',
         takeaway: '<<<<<<< HEAD is yours, ======= splits, >>>>>>> incoming is theirs. Edit to the final version, remove all markers, commit.',
+        realWorldApp: 'Two classmates editing one project will hit a conflict eventually — resolving it calmly is a real teamwork skill.',
+        objectives: ['Recognise conflict markers', 'Choose or combine both versions', 'Finish a merge with a commit'],
         quiz: {
           question: 'What does the "<<<<<<< HEAD" marker denote in a Git conflict file?',
           options: [
@@ -684,6 +714,7 @@ print("Next year you will be", next_year)`,
         thinkQuestion: 'What happens to next_year if you change age after computing it?',
         practiceActivity: 'Ask for a favourite food, store it, and print a sentence using it.',
         takeaway: 'Variables store values; print() shows them and input() reads text.',
+        realWorldApp: 'Every interactive Python script — from quizzes to file organizers — starts with variables, input() and print().',
         expectedOutput: `Hello, Maya\nNext year you will be 18`,
         objectives: ['Create variables with =', 'Use print() for output', 'Read text with input()'],
         quiz: {
@@ -728,6 +759,8 @@ for i in range(3):
         thinkQuestion: 'What error would Python show if one line used 4 spaces and the next used a tab?',
         practiceActivity: 'Set score to 82 and predict the grade before running. Then rewrite the for loop to print "Round" five times.',
         takeaway: 'Indentation IS the block in Python — mixing tabs and spaces is a real bug, not just style.',
+        realWorldApp: 'Grade calculators, game rounds and retry logic are if/elif/else plus for loops in every Python app.',
+        objectives: ['Write if / elif / else chains', 'Repeat work with for and range()', 'Explain why indentation is syntax'],
         quiz: {
           question: 'In Python, what defines the body of an if statement?',
           options: [
@@ -769,6 +802,8 @@ print("First score:", scores[0])`,
         thinkQuestion: 'scores[-1] gives the last item. What does scores[3] give on a list that only has three items?',
         practiceActivity: 'Write a function biggest(numbers) that returns the largest value, and test it with [4, 19, 7].',
         takeaway: 'def defines, return sends a value back, and list indexes start at 0 — the last item lives at scores[len(scores) - 1].',
+        realWorldApp: 'Expense trackers and result summaries loop over lists and reuse functions to total, average and report values.',
+        objectives: ['Define and call functions with return', 'Store collections in lists', 'Loop a list and compute an average'],
         quiz: {
           question: 'What does scores[0] refer to in the list [70, 85, 92]?',
           options: ['70', '85', '92', 'An error — indexes start at 1'],
@@ -818,6 +853,8 @@ Analogy: Python is a sketchbook; Java is an engineering drawing — every measur
         thinkQuestion: 'What error do you get if you write String age = 17; — and why is that compiler error actually protecting you?',
         practiceActivity: 'Write your own FirstProgram with a boolean isStudent and a double gpa, and print both with System.out.println.',
         takeaway: 'Every Java program starts at public static void main. Declare int, double, String — the compiler checks the types for you.',
+        realWorldApp: 'Android apps and enterprise backends all begin at main() inside a class with strictly declared types.',
+        objectives: ['Explain why code lives in a class', 'Start execution at main()', 'Declare int, double and String variables'],
         quiz: {
           question: 'Where does a Java program begin executing?',
           options: [
@@ -858,6 +895,8 @@ for (int i = 0; i < 3; i++) {
         thinkQuestion: 'What happens if you write if (marks = 75) in Java? Does it compile — and what about the same mistake in C?',
         practiceActivity: 'Rewrite the marks example for three different scores and predict each output. Then write a while loop that prints 3, 2, 1, liftoff.',
         takeaway: '= assigns, == compares. The for line packs start, condition and step into one engine.',
+        realWorldApp: 'Pass/fail checks, game loops and batch processing all run on Java conditions and for loops.',
+        objectives: ['Use if / else if / else correctly', 'Write a three-part for loop', 'Explain = vs =='],
         quiz: {
           question: 'What is the difference between = and == in Java?',
           options: [
@@ -902,6 +941,8 @@ An array holds a fixed number of values of the same type. int[] marks = new int[
         thinkQuestion: 'Why does doubleIt declare int as its return type — and what happens if you remove the return statement?',
         practiceActivity: 'Add a static int biggest(int[] marks) method and call it from main with your own array.',
         takeaway: 'Methods declare a return type (void means "returns nothing"); array indexes start at 0 and length comes from marks.length.',
+        realWorldApp: 'Any Java program that processes scores, names or records uses methods over arrays — from marks sheets to banking batches.',
+        objectives: ['Write a static method with a return type', 'Store data in arrays', 'Loop an array safely with marks.length'],
         quiz: {
           question: 'What is the index of the FIRST element in a Java array?',
           options: ['1', '0', '-1', 'It depends on the array size'],
@@ -950,6 +991,8 @@ int main() {
         thinkQuestion: 'What could go wrong if the user types "abc" when scanf expects %d — a number?',
         practiceActivity: 'Write a program that asks for two numbers with scanf and prints their sum. Then remove one & and read the compiler error.',
         takeaway: 'Every statement ends with ;. %d and %s are placeholders. scanf needs & because it writes to the address you give it.',
+        realWorldApp: 'Embedded devices and system tools still read input and print with scanf and printf — the foundations of systems programming.',
+        objectives: ['Write a complete main() with semicolons', 'Print with format specifiers', 'Read input with scanf and &'],
         quiz: {
           question: 'Why does scanf need &age instead of just age?',
           options: [
@@ -990,6 +1033,8 @@ for (int i = 1; i <= 3; i++) {
         thinkQuestion: 'This loop starts at i = 1 while most loops start at 0. Which output line would change if you started at 0?',
         practiceActivity: 'Write a loop that prints the even numbers from 2 to 10 using the modulus operator: if (i % 2 == 0).',
         takeaway: '&& means AND and || means OR — never the words "and"/"or". The for line packs start, condition and step together.',
+        realWorldApp: 'Hardware drivers and parsers run on tight C loops where && and == decide every branch.',
+        objectives: ['Write if / else if / else in C', 'Loop with start, condition and step', 'Use && and || correctly'],
         quiz: {
           question: 'What does && mean in C?',
           options: [
@@ -1205,6 +1250,8 @@ INNER JOIN projects
         thinkQuestion: 'What happens if you try let xp: number = "twenty-five"? Where does the error appear — editor or browser?',
         practiceActivity: 'Define a Builder interface with name, xp and streak, create one builder object, then try adding an extra wrong-typed field.',
         takeaway: 'Types label what a variable holds; interfaces describe object shapes — both fail fast, before runtime.',
+        realWorldApp: 'Every serious React and Node codebase uses TypeScript interfaces to keep a team data shapes in agreement.',
+        objectives: ['Annotate variables with types', 'Describe object shapes with interfaces', 'Let type errors appear before running code'],
         quiz: {
           question: 'What does `: number` do in `let xp: number`?',
           options: ['Sets xp to number', 'Declares xp must hold a number', 'Converts xp to text', 'Makes xp optional'],
@@ -1241,6 +1288,8 @@ INNER JOIN projects
         thinkQuestion: 'What happens if you try to change a prop inside the component? Try it — what does React warn you?',
         practiceActivity: 'Write a Badge({ label }) component and render three of them with different labels inside one parent component.',
         takeaway: 'Components are functions that return UI; props are read-only inputs from the parent. Reuse the component, change the props.',
+        realWorldApp: 'Dashboards, feeds and card lists are the same component rendered many times with different props.',
+        objectives: ['Write a component function', 'Pass data through props', 'Reuse one component with different data'],
         quiz: {
           question: 'What are props in React?',
           options: ['CSS styles', 'Inputs passed into a component', 'Build settings', 'Database rows'],
