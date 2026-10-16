@@ -121,6 +121,12 @@ When you use <main>, <header>, <nav>, and <article>, search engines understand y
     <p>Semantic tags make your code future-proof and welcoming to everyone.</p>
   </article>
 </main>`,
+        whyUseful: 'Semantic tags make your pages readable by screen readers, easier to debug, and better understood by search engines — div soup does none of that.',
+        analogy: 'A page built from semantic tags is a well-labelled office: reception, meeting room, archive. A div-only page is a pile of identical unmarked boxes.',
+        expectedOutput: 'A page where assistive technology announces "banner", "navigation", "main" and "article" landmarks instead of anonymous blocks.',
+        thinkQuestion: 'If every part of your page was a <div>, what would a blind user hear when they try to jump straight to the main content?',
+        practiceActivity: 'Take any page you have built and replace generic <div> wrappers with <header>, <nav>, <main> and <footer>. Reload and inspect the Elements panel to see the new structure.',
+        takeaway: 'Use <div> only when no semantic tag fits. <main> appears at most once per page — it is THE unique content.',
         quiz: {
           question: 'Which element should encapsulate the dominant, unique content of an HTML document?',
           options: ['<section>', '<main>', '<div>', '<body>'],
@@ -146,6 +152,12 @@ When you use <main>, <header>, <nav>, and <article>, search engines understand y
   />
   <button type="submit">Join the Verse</button>
 </form>`,
+        whyUseful: 'Labels make forms accessible and easier to tap on phones, while type and required give free validation before any server is involved.',
+        analogy: 'A label is a name tag pinned to an input. Without it, the form is a row of unmarked boxes and users have to guess what goes where.',
+        expectedOutput: 'A labelled email field. Submitting with an empty or malformed address shows a built-in browser error before the form posts.',
+        thinkQuestion: 'What happens when you click the label text — does the cursor land in the input? What breaks when "for" does not match the id?',
+        practiceActivity: 'Build a signup form with three labelled inputs (name, email, password). Try submitting an invalid email and watch the browser stop you.',
+        takeaway: 'The label "for" must exactly equal the input id. type="email" + required gives you validation for free — never skip labels.',
         quiz: {
           question: 'What connects an <input> to its corresponding <label>?',
           options: [
@@ -171,6 +183,12 @@ When you use <main>, <header>, <nav>, and <article>, search engines understand y
   <title>BuilderVerse — Learn by Building</title>
   <meta property="og:title" content="BuilderVerse" />
 </head>`,
+        whyUseful: 'The viewport tag is what makes a page scale correctly on phones; title and og tags control how your link appears in search results and chats.',
+        analogy: 'The <head> is the page\'s ID card — nothing visible, but it tells the world who the page is, what language it speaks, and how it should look when shared.',
+        expectedOutput: 'On a phone the page renders at device width (no tiny zoomed-out desktop view), and sharing the URL shows the "BuilderVerse" preview card.',
+        thinkQuestion: 'Delete the viewport meta tag and open the page in mobile device mode — why does everything suddenly look tiny?',
+        practiceActivity: 'Remove the viewport tag from one of your pages, screenshot it in device mode, then add it back and compare the two screenshots.',
+        takeaway: 'Every modern page needs charset, viewport and title — the three meta tags you should never omit.',
         quiz: {
           question: 'Why is the viewport meta tag critical for modern web development?',
           options: [
@@ -223,6 +241,12 @@ Always set "box-sizing: border-box;" globally so padding doesn't inflate element
   border: 1px solid #EBD5DD;
   /* Total rendered width remains exactly 320px! */
 }`,
+        whyUseful: 'border-box ends the "why is my layout 40px too wide?" mystery — padding and borders stop inflating element widths.',
+        analogy: 'A content-box element is a gift where the wrapping paper adds to the package size; a border-box element is a fixed-size box where everything fits inside the declared size.',
+        expectedOutput: '.card renders exactly 320px wide, including its 24px padding on each side and 1px border.',
+        thinkQuestion: 'With the default box-sizing: content-box, how wide would .card actually be? Count the padding and border yourself.',
+        practiceActivity: 'In DevTools, toggle box-sizing on .card in the Styles pane and watch the computed width number change live.',
+        takeaway: 'Set * { box-sizing: border-box } at the top of every stylesheet — it is the single most reused CSS rule in real projects.',
         quiz: {
           question: 'What happens to element width when box-sizing is set to border-box and you add 20px padding?',
           options: [
@@ -248,6 +272,12 @@ Always set "box-sizing: border-box;" globally so padding doesn't inflate element
   align-items: center;     /* Center along cross axis */
   gap: 16px;
 }`,
+        whyUseful: 'Two properties — justify-content and align-items — solve most centering problems that used to require messy hacks.',
+        analogy: 'A flex row is a shelf: justify-content arranges items left-to-right along the shelf, align-items decides whether they stand on the floor or hang from the top.',
+        expectedOutput: 'Children of .hero-banner sit perfectly centred both horizontally and vertically, with a 16px gap between them.',
+        thinkQuestion: 'If you changed flex-direction to column, which property would centre items horizontally — justify-content or align-items?',
+        practiceActivity: 'Make a div 400px tall and centre a single button exactly in its middle with only three lines of flex CSS.',
+        takeaway: 'Main axis follows flex-direction; cross axis is always perpendicular. Perfect centring = justify-content: center + align-items: center.',
         quiz: {
           question: 'In a standard row flex container, which property centers items vertically?',
           options: ['justify-content', 'align-items', 'text-align', 'vertical-align'],
@@ -267,6 +297,12 @@ Always set "box-sizing: border-box;" globally so padding doesn't inflate element
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 24px;
 }`,
+        whyUseful: 'One line of grid CSS replaces stacks of media queries — the layout adapts to any screen automatically.',
+        analogy: 'auto-fit + minmax is like egg cartons: each slot is at least 280px and holds one card, and if the tray is wider, extra slots appear.',
+        expectedOutput: 'On a 1200px screen roughly 3–4 cards fit per row; on a 400px phone they stack to one column — no media queries written.',
+        thinkQuestion: 'What would change if you wrote minmax(500px, 1fr) instead? Which devices would struggle with that?',
+        practiceActivity: 'Open your grid page and slowly drag the browser window narrower — count how many times the card rows reflow, then try different minmax values.',
+        takeaway: 'minmax(min, max) sets a size range; 1fr means "share leftover space equally"; auto-fit creates as many columns as fit.',
         quiz: {
           question: 'What does "minmax(280px, 1fr)" accomplish inside a grid template?',
           options: [
@@ -313,6 +349,12 @@ const activeBuilders = builders
   .map(b => b.name);
 
 console.log(activeBuilders); // ['Alex', 'Sam']`,
+        whyUseful: 'Almost every real app is "an array of objects": users, tasks, products. .map() and .filter() transform that data without fragile index loops.',
+        analogy: '.filter() is a sieve — it keeps only what passes through. .map() is a factory line — every item goes in and comes out transformed.',
+        expectedOutput: "['Alex', 'Sam'] — only builders with a streak of 3+ days, showing names only.",
+        thinkQuestion: 'What would builders.filter(b => b.streak >= 3) return if you removed the .map(b => b.name) after it?',
+        practiceActivity: 'Add a .filter() that keeps builders with xp above 500, then .map() them into strings like "Sam: 890 XP".',
+        takeaway: 'map transforms every item, filter keeps some items, and neither changes the original array.',
         quiz: {
           question: 'Which array method transforms every item in an array and returns a new array of the same length?',
           options: ['.filter()', '.map()', '.reduce()', '.forEach()'],
@@ -333,6 +375,12 @@ console.log(activeBuilders); // ['Alex', 'Sam']`,
 };
 
 console.log(calculateXpBonus(100)); // 120`,
+        whyUseful: 'Block scope stops variables leaking between code blocks — one of the most common sources of beginner bugs.',
+        analogy: 'Scope is like a room key: a const declared inside { } lives in that room only. Outside, the key does not fit.',
+        expectedOutput: '120 — the default multiplier 1.2 is used because no second argument is passed.',
+        thinkQuestion: 'What happens if you try to read bonus from outside the function? Name the error you would see.',
+        practiceActivity: 'Call calculateXpBonus(200, 1.5) and predict the output before running it. Then declare a variable inside an if block and try to log it outside.',
+        takeaway: 'const/let are block-scoped; arrow functions keep the "this" of where they were written; default parameters fill in missing arguments.',
         quiz: {
           question: 'What scope do variables declared with "const" and "let" have in JavaScript?',
           options: ['Global only', 'Function only', 'Block scope (enclosed by {})', 'Module scope only'],
@@ -354,6 +402,12 @@ async function runCountdown() {
   await sleep(1000);
   console.log('Launch!');
 }`,
+        whyUseful: 'Network calls, timers and file reads all take time — Promises let your page keep responding instead of freezing while waiting.',
+        analogy: 'A Promise is a food order ticket: you order, the kitchen works in the background, and you collect the food when the ticket is called.',
+        expectedOutput: "'Ready...' prints immediately, then 'Launch!' prints about 1 second later — the page never freezes.",
+        thinkQuestion: 'What would happen to the countdown if you removed the await in front of sleep(1000)?',
+        practiceActivity: 'Change the delay to 3000ms and add a third log line after "Launch!". Predict the order, then run it.',
+        takeaway: 'async functions always return a Promise; await pauses only that function, never the whole page.',
         quiz: {
           question: 'What does an async function always return in JavaScript?',
           options: ['A boolean', 'A Promise', 'undefined', 'A callback'],
@@ -392,6 +446,12 @@ list.addEventListener('click', (event) => {
   const item = deleteBtn.closest('li');
   item.remove();
 });`,
+        whyUseful: 'One listener on the parent handles every current and future list item — faster and simpler than hundreds of listeners.',
+        analogy: 'Delegation is a mailroom: instead of every resident standing outside, letters bubble up to the mailroom, which sorts them by the return address (event.target).',
+        expectedOutput: 'Clicking any .btn-delete removes its parent <li> — even for items added to the list after the page loaded.',
+        thinkQuestion: 'Why does the code use closest() instead of checking event.target directly? What happens if the delete icon is nested inside the button?',
+        practiceActivity: 'Add new list items with JavaScript after the page loads and confirm delete still works without adding any new listeners.',
+        takeaway: 'Events bubble from the clicked element upward — listen once on a parent and use .closest() to find what was clicked.',
         quiz: {
           question: 'What DOM mechanism enables event delegation by letting events bubble up the hierarchy?',
           options: ['Event Bubbling', 'Event Hoisting', 'Garbage Collection', 'Shadow DOM'],
@@ -412,6 +472,12 @@ list.addEventListener('click', (event) => {
   badge.textContent = label;
   return badge;
 }`,
+        whyUseful: 'createElement + textContent protects you from XSS attacks, where strangers inject scripts through their input.',
+        analogy: 'innerHTML is accepting a package and unpacking it yourself — it might contain anything. textContent is writing on the box directly: nothing inside can run.',
+        expectedOutput: 'A <span class="badge-tag"> element containing the label as plain text, with no HTML parsed.',
+        thinkQuestion: 'What would happen if someone typed <img onerror=alert(1)> as their name and you rendered it with innerHTML?',
+        practiceActivity: 'Create a function addComment(text) that builds a comment node with createElement and textContent, then add three comments to a list.',
+        takeaway: 'Never render user input with innerHTML. createElement + textContent is the safe default.',
         quiz: {
           question: 'Why is textContent preferred over innerHTML when inserting user-provided strings?',
           options: [
@@ -459,6 +525,12 @@ list.addEventListener('click', (event) => {
     return { success: false, error: err.message };
   }
 }`,
+        whyUseful: 'Every real app faces failed requests — checking response.ok and catching errors separates apps that crash from apps that show a friendly message.',
+        analogy: 'A fetch response is a delivery: the courier arriving means the package arrived — but the box may still say "OUT OF STOCK" (a 404). response.ok opens the box to check.',
+        expectedOutput: 'Success: { success: true, data: {...} }. A 404: console shows "Fetch failed: Server returned status 404" and the function returns { success: false, ... }.',
+        thinkQuestion: 'Why does the catch block also matter if you already check res.ok? Give one error it catches that the ok check cannot.',
+        practiceActivity: 'Call fetchCurrentWeather("Paris") and then fetchCurrentWeather("") — compare what each returns, then write a displayWeather function that shows "offline" on failure.',
+        takeaway: 'fetch only rejects on network failure. HTTP errors need response.ok; everything else lives in try/catch.',
         quiz: {
           question: 'Why does fetch() not reject when a server responds with a 404 or 500 HTTP error code?',
           options: [
@@ -483,6 +555,12 @@ list.addEventListener('click', (event) => {
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ title: 'Complete daily goal', done: false })
 });`,
+        whyUseful: 'Using the correct HTTP method is how the server knows whether you are reading, creating, updating or deleting — get it wrong and the server rejects you.',
+        analogy: 'REST verbs are library actions: GET reads a book, POST donates a new book, PUT replaces a book’s record, DELETE removes it.',
+        expectedOutput: 'A new task record is created server-side; the response usually returns 201 Created with the saved task as JSON.',
+        thinkQuestion: 'Which method would you use to update only the done field of an existing task — PUT or PATCH? What is the difference?',
+        practiceActivity: 'Write (from memory) the fetch call that GETs /api/tasks and the one that DELETEs /api/tasks/12 — headers and body yourself, no copying.',
+        takeaway: 'GET reads, POST creates, PUT/PATCH update, DELETE removes. JSON bodies need Content-Type: application/json and JSON.stringify().',
         quiz: {
           question: 'Which HTTP method should be used when creating a brand-new resource on a REST API?',
           options: ['GET', 'POST', 'PATCH', 'OPTIONS'],
@@ -526,6 +604,12 @@ git commit -m "feat: add interactive XP progress ring"
 
 # Push to remote
 git push -u origin feat/user-dashboard`,
+        whyUseful: 'Feature branches let you experiment freely — if an experiment fails, your main branch stays clean and working.',
+        analogy: 'A branch is a draft copy of a book chapter: you rewrite freely, and the published book is untouched until the chapter is approved and merged.',
+        expectedOutput: 'A new branch feat/user-dashboard containing one commit; after push, the branch appears on GitHub ready for a pull request.',
+        thinkQuestion: 'What would happen if you ran git push before git add and git commit? Where would your changes go?',
+        practiceActivity: 'In any repo: create a branch, edit one file, commit with a message starting "feat:" or "fix:", push it, then merge it back.',
+        takeaway: 'Branch → change → commit → push → pull request. Never commit unfinished experiments straight to main.',
         quiz: {
           question: 'Which Git command creates a new branch and immediately switches your working directory to it?',
           options: ['git branch new-feature', 'git checkout -b new-feature', 'git merge new-feature', 'git init new-feature'],
@@ -545,6 +629,12 @@ const theme = 'blush-pink';
 =======
 const theme = 'rose-gold';
 >>>>>>> feature-theme`,
+        whyUseful: 'Conflicts are normal in teamwork — knowing the markers means you never panic when Git pauses a merge.',
+        analogy: 'A conflict is two editors rewriting the same sentence in one manuscript; Git highlights both versions and asks you to pick or combine them.',
+        expectedOutput: 'After resolving: one chosen theme line remains (e.g. blush-pink), all markers removed, and git commit finishes the merge.',
+        thinkQuestion: 'Is a conflict an error that means you broke something? What does Git actually want from you?',
+        practiceActivity: 'Create two branches, edit the same line in both, merge, resolve the markers by hand, and commit. You have now resolved your first conflict.',
+        takeaway: '<<<<<<< HEAD is yours, ======= splits, >>>>>>> incoming is theirs. Edit to the final version, remove all markers, commit.',
         quiz: {
           question: 'What does the "<<<<<<< HEAD" marker denote in a Git conflict file?',
           options: [
@@ -594,6 +684,7 @@ print("Next year you will be", next_year)`,
         thinkQuestion: 'What happens to next_year if you change age after computing it?',
         practiceActivity: 'Ask for a favourite food, store it, and print a sentence using it.',
         takeaway: 'Variables store values; print() shows them and input() reads text.',
+        expectedOutput: `Hello, Maya\nNext year you will be 18`,
         objectives: ['Create variables with =', 'Use print() for output', 'Read text with input()'],
         quiz: {
           question: 'What does input("Age: ") return in Python 3?',
@@ -631,6 +722,12 @@ print("Grade:", grade)
 
 for i in range(3):
     print("Attempt", i + 1)`,
+        whyUseful: 'Conditions and loops are how programs make decisions and repeat work — nearly every real feature uses both.',
+        analogy: 'if / elif / else is a signpost at a crossroads; a for loop is a roundabout you drive exactly three times.',
+        expectedOutput: 'Grade: B, then Attempt 1, Attempt 2, Attempt 3 (score 68 falls into the elif branch).',
+        thinkQuestion: 'What error would Python show if one line used 4 spaces and the next used a tab?',
+        practiceActivity: 'Set score to 82 and predict the grade before running. Then rewrite the for loop to print "Round" five times.',
+        takeaway: 'Indentation IS the block in Python — mixing tabs and spaces is a real bug, not just style.',
         quiz: {
           question: 'In Python, what defines the body of an if statement?',
           options: [
@@ -666,6 +763,12 @@ for score in scores:
 
 print("Average:", total / len(scores))
 print("First score:", scores[0])`,
+        whyUseful: 'Functions stop copy-paste and lists hold collections — together they are how small scripts grow into real programs.',
+        analogy: 'A function is a sandwich maker — bread in, sandwich out. A list is a lunchbox with numbered compartments starting at 0.',
+        expectedOutput: 'Hello, Maya\nAverage: 82.33333333333333\nFirst score: 70',
+        thinkQuestion: 'scores[-1] gives the last item. What does scores[3] give on a list that only has three items?',
+        practiceActivity: 'Write a function biggest(numbers) that returns the largest value, and test it with [4, 19, 7].',
+        takeaway: 'def defines, return sends a value back, and list indexes start at 0 — the last item lives at scores[len(scores) - 1].',
         quiz: {
           question: 'What does scores[0] refer to in the list [70, 85, 92]?',
           options: ['70', '85', '92', 'An error — indexes start at 1'],
@@ -709,6 +812,12 @@ Analogy: Python is a sketchbook; Java is an engineering drawing — every measur
         System.out.println("Next year: " + (age + 1));
     }
 }`,
+        whyUseful: 'Declared types catch mistakes before the program runs — the compiler stops wrong-value bugs at build time.',
+        analogy: 'Python is a sketchbook; Java is an engineering drawing — every measurement must be written down. A class is a blueprint, main() is the front door.',
+        expectedOutput: 'Hello, Maya\nNext year: 18',
+        thinkQuestion: 'What error do you get if you write String age = 17; — and why is that compiler error actually protecting you?',
+        practiceActivity: 'Write your own FirstProgram with a boolean isStudent and a double gpa, and print both with System.out.println.',
+        takeaway: 'Every Java program starts at public static void main. Declare int, double, String — the compiler checks the types for you.',
         quiz: {
           question: 'Where does a Java program begin executing?',
           options: [
@@ -743,6 +852,12 @@ if (marks >= 75) {
 for (int i = 0; i < 3; i++) {
     System.out.println("Practice round " + (i + 1));
 }`,
+        whyUseful: 'The = vs == distinction prevents one of the most common beginner bugs — and Java\'s compiler usually catches it before you run.',
+        analogy: '= puts a value INTO the box; == looks at two boxes and asks "are these the same?"',
+        expectedOutput: 'Pass\nPractice round 1\nPractice round 2\nPractice round 3',
+        thinkQuestion: 'What happens if you write if (marks = 75) in Java? Does it compile — and what about the same mistake in C?',
+        practiceActivity: 'Rewrite the marks example for three different scores and predict each output. Then write a while loop that prints 3, 2, 1, liftoff.',
+        takeaway: '= assigns, == compares. The for line packs start, condition and step into one engine.',
         quiz: {
           question: 'What is the difference between = and == in Java?',
           options: [
@@ -781,6 +896,12 @@ An array holds a fixed number of values of the same type. int[] marks = new int[
         System.out.println("Double 21: " + doubleIt(21));
     }
 }`,
+        whyUseful: 'Methods make logic reusable; arrays store collections — both appear in every real Java codebase.',
+        analogy: 'A method is a labelled tool in a toolbox; an array is a fixed-size row of pigeonholes numbered from 0.',
+        expectedOutput: 'Average: 82.33333333333333\nDouble 21: 42',
+        thinkQuestion: 'Why does doubleIt declare int as its return type — and what happens if you remove the return statement?',
+        practiceActivity: 'Add a static int biggest(int[] marks) method and call it from main with your own array.',
+        takeaway: 'Methods declare a return type (void means "returns nothing"); array indexes start at 0 and length comes from marks.length.',
         quiz: {
           question: 'What is the index of the FIRST element in a Java array?',
           options: ['1', '0', '-1', 'It depends on the array size'],
@@ -823,6 +944,12 @@ int main() {
     printf("Next year you will be %d\\n", age + 1);
     return 0;
 }`,
+        whyUseful: 'Understanding printf, scanf and the & operator teaches you how memory really works — knowledge that makes every later language easier.',
+        analogy: 'printf is a template card where you stamp numbers into marked slots; & hands scanf the exact mailbox address to write into.',
+        expectedOutput: 'Enter your age: 17\nNext year you will be 18',
+        thinkQuestion: 'What could go wrong if the user types "abc" when scanf expects %d — a number?',
+        practiceActivity: 'Write a program that asks for two numbers with scanf and prints their sum. Then remove one & and read the compiler error.',
+        takeaway: 'Every statement ends with ;. %d and %s are placeholders. scanf needs & because it writes to the address you give it.',
         quiz: {
           question: 'Why does scanf need &age instead of just age?',
           options: [
@@ -857,6 +984,12 @@ if (marks >= 75) {
 for (int i = 1; i <= 3; i++) {
     printf("Practice round %d\\n", i);
 }`,
+        whyUseful: 'C conditions and loops have the same shape as Java and Python but stricter rules — learning them shows what other languages quietly hide.',
+        analogy: 'for (int i = 1; i <= 3; i++) is a lift visiting floors 1, 2, 3 — the start floor, the allowed floors, and the next floor.',
+        expectedOutput: 'Pass\nPractice round 1\nPractice round 2\nPractice round 3',
+        thinkQuestion: 'This loop starts at i = 1 while most loops start at 0. Which output line would change if you started at 0?',
+        practiceActivity: 'Write a loop that prints the even numbers from 2 to 10 using the modulus operator: if (i % 2 == 0).',
+        takeaway: '&& means AND and || means OR — never the words "and"/"or". The for line packs start, condition and step together.',
         quiz: {
           question: 'What does && mean in C?',
           options: [
@@ -1066,6 +1199,12 @@ INNER JOIN projects
         summary: 'Add string, number and interface types to plain JavaScript.',
         content: `TypeScript lets you label what type each variable holds. An interface describes the shape of an object so mistakes are caught before the code runs.`,
         codeSnippet: `let xp: number = 25;\ninterface Builder { name: string; xp: number; }`,
+        whyUseful: 'Types catch bugs before the code runs — the editor flags wrong values the moment you type them, instead of at 2am in production.',
+        analogy: 'JavaScript is speaking freely; TypeScript is speaking with a label maker attached — every value carries its type on show.',
+        expectedOutput: 'No output — the point is that TypeScript flags xp = "twenty-five" as an error before you ever run the code.',
+        thinkQuestion: 'What happens if you try let xp: number = "twenty-five"? Where does the error appear — editor or browser?',
+        practiceActivity: 'Define a Builder interface with name, xp and streak, create one builder object, then try adding an extra wrong-typed field.',
+        takeaway: 'Types label what a variable holds; interfaces describe object shapes — both fail fast, before runtime.',
         quiz: {
           question: 'What does `: number` do in `let xp: number`?',
           options: ['Sets xp to number', 'Declares xp must hold a number', 'Converts xp to text', 'Makes xp optional'],
@@ -1096,6 +1235,12 @@ INNER JOIN projects
         summary: 'Render reusable components that receive data via props.',
         content: `A React component is a function that returns UI. Props pass data into it, so one component can render many different builders.`,
         codeSnippet: `function Hello({ name }) {\n  return <h1>Hello, {name}</h1>;\n}`,
+        whyUseful: 'Components let you build one reusable piece and render it many times with different data — the core idea behind every modern UI library.',
+        analogy: 'A component is a rubber stamp: same stamp, different ink (props) — press it again and you get a new, slightly different badge.',
+        expectedOutput: '<h1>Hello, Maya</h1> — when rendered as <Hello name="Maya" />.',
+        thinkQuestion: 'What happens if you try to change a prop inside the component? Try it — what does React warn you?',
+        practiceActivity: 'Write a Badge({ label }) component and render three of them with different labels inside one parent component.',
+        takeaway: 'Components are functions that return UI; props are read-only inputs from the parent. Reuse the component, change the props.',
         quiz: {
           question: 'What are props in React?',
           options: ['CSS styles', 'Inputs passed into a component', 'Build settings', 'Database rows'],
